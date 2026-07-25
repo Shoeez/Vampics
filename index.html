@@ -2053,8 +2053,18 @@ class Component extends DCLogic {
       let comments = [];
       try { comments = JSON.parse(localStorage.getItem('vpx-comments-' + id) || '[]'); } catch (e) {}
       this.loadSeriesSocial(id);
-      // Chapters (for the reader) come from MangaDex, matched by title.
-      const chapters = await this.loadChapters(m);
+      // Chapters: prefer the user's self-hosted library (matched by anilistId or title),
+      // otherwise fall back to MangaDex matched by title.
+      const wantTitles = [m.title && m.title.english, m.title && m.title.romaji, m.title && m.title.native, ...(m.synonyms || [])].filter(Boolean).map(t => this.norm(t));
+      const lib = (this.state.libSeries || []).find(x => (x.anilistId && Number(x.anilistId) === Number(id)) || wantTitles.includes(this.norm(x.title)));
+      let chapters;
+      if (lib && lib.chapters.length) {
+        chapters = lib.chapters.slice().sort((a, b) => b.num - a.num).map(c => ({
+          id: 'lib-' + id + '-ch' + c.num, num: String(c.num), label: 'Ch.' + c.num, title: c.title || '', group: 'Your library', ago: '', local: true, url: c.url,
+        }));
+      } else {
+        chapters = await this.loadChapters(m);
+      }
       chapters.forEach((c, i) => { c.read = () => this.openChapter(i); });
       this.setState({ series, chapters, comments, seriesLoading: false });
     } catch (e) {
@@ -2387,8 +2397,8 @@ class Component extends DCLogic {
       latest: s.latest.map(m => this.withBm(m, s.follows)),
       skel5: [1, 2, 3, 4, 5], skel6: [1, 2, 3, 4, 5, 6], skel12: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       // self-hosted library
-      hasLibrary: (s.libSeries || []).length > 0,
-      libCards: (s.libSeries || []).map(ls => ({ title: ls.title, cover: ls.cover, chLabel: ls.chapters.length + ' chapters', open: () => this.openLibSeries(ls) })),
+      hasLibrary: (s.libSeries || []).filter(ls => !ls.anilistId).length > 0,
+      libCards: (s.libSeries || []).filter(ls => !ls.anilistId).map(ls => ({ title: ls.title, cover: ls.cover, chLabel: ls.chapters.length + ' chapters', open: () => this.openLibSeries(ls) })),
       libUrl: s.libUrl,
       libStatus: s.libStatus,
       onLibUrl: (e) => this.setState({ libUrl: e.target.value }),
@@ -3085,7 +3095,12 @@ class Component extends DCLogic {
           let chs = [];
           const c = sr.chapters;
           if (Array.isArray(c)) chs = c.map(x => ({ num: x.num, file: x.file, title: x.title || '' }));
-          else if (c && c.pattern) { for (let n = c.from; n <= c.to; n++) chs.push({ num: n, file: c.pattern.split('{n}').join(n), title: '' }); }
+          else if (c && c.pattern) {
+            let nums = [];
+            if (Array.isArray(c.list)) nums = c.list;
+            else for (let n = c.from; n <= c.to; n++) nums.push(n);
+            for (const n of nums) chs.push({ num: n, file: c.pattern.split('{n}').join(n), title: '' });
+          }
           const prefix = base + '/' + (sr.path ? String(sr.path).replace(/\/+$/, '') + '/' : '');
           chs = chs.map(x => ({ ...x, url: prefix + encodeURIComponent(x.file).split('%2F').join('/') }));
           const key = sr.id || sr.title;
@@ -3095,7 +3110,12 @@ class Component extends DCLogic {
         }
       } catch (e) { errs++; }
     }
-    const libSeries = Object.values(byId).map(sr => ({ ...sr, chapters: sr.chapters.slice().sort((a, b) => a.num - b.num) }));
+    // dedupe by chapter number - the FIRST source URL listed wins
+    const libSeries = Object.values(byId).map(sr => {
+      const seen = {};
+      const chapters = sr.chapters.filter(c => { const k = String(c.num); if (seen[k]) return false; seen[k] = 1; return true; }).sort((a, b) => a.num - b.num);
+      return { ...sr, chapters };
+    });
     this.setState({ libSeries, libStatus: errs ? (loaded ? 'Loaded, but some URLs failed.' : 'Could not load the library. Check the URL and that manifest.json exists (repo must be public).') : (loaded ? 'Library loaded: ' + libSeries.length + ' series.' : 'No series found in manifest.') });
   }
 
