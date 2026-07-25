@@ -24,10 +24,8 @@ a { color: #dfae52; text-decoration: none; }
 a:hover { color: #eecf8f; }
 input, button, textarea { font-family: inherit; }
 input::placeholder, textarea::placeholder { color: #63636f; }
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #0f0f13; }
-::-webkit-scrollbar-thumb { background: #26262f; border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: #32323e; }
+::-webkit-scrollbar { width: 0; height: 0; display: none; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
 @keyframes vpx-shimmer { 0% { background-position: -420px 0; } 100% { background-position: 420px 0; } }
 @keyframes vpx-fadeup { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes vpx-fadein { from { opacity: 0; } to { opacity: 1; } }
@@ -35,6 +33,8 @@ input::placeholder, textarea::placeholder { color: #63636f; }
 @keyframes vpx-spin { to { transform: rotate(360deg); } }
 @keyframes vpx-slideup { from { opacity: 0; transform: translate(-50%, 24px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @keyframes vpx-react-pop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes vpx-drift1 { 0%, 100% { transform: translate(-10%, -6%) scale(1); } 50% { transform: translate(9%, 5%) scale(1.18); } }
+@keyframes vpx-drift2 { 0%, 100% { transform: translate(7%, 9%) scale(1.12); } 50% { transform: translate(-9%, -5%) scale(1); } }
 @keyframes vpx-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
 .vpx-bm { opacity: 0; transition: opacity .2s, background .18s, transform .18s; }
 .vpx-pcard:hover .vpx-bm, .vpx-bm:hover { opacity: 1; }
@@ -58,7 +58,12 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
 </style>
 </helmet>
 
-<div style="min-height:100vh;background:#0f0f13">
+<div style="min-height:100vh">
+  <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden">
+    <div style="position:absolute;top:-22%;left:-12%;width:58vw;height:58vw;border-radius:50%;background:radial-gradient(circle,rgba(216,169,78,.055),transparent 62%);animation:vpx-drift1 28s ease-in-out infinite"></div>
+    <div style="position:absolute;bottom:-26%;right:-14%;width:64vw;height:64vw;border-radius:50%;background:radial-gradient(circle,rgba(104,84,150,.05),transparent 62%);animation:vpx-drift2 34s ease-in-out infinite"></div>
+    <div style="position:absolute;top:32%;right:18%;width:32vw;height:32vw;border-radius:50%;background:radial-gradient(circle,rgba(216,169,78,.035),transparent 62%);animation:vpx-drift2 44s ease-in-out infinite"></div>
+  </div>
 
   <!-- ============ HEADER ============ -->
   <sc-if value="{{ showHeader }}" hint-placeholder-val="{{ true }}">
@@ -72,6 +77,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
         <div class="vpx-nav-links" style="display:flex;align-items:center;gap:2px;flex:0 0 auto">
           <div onClick="{{ goHome }}" style="padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600;color:{{ navHomeColor }};cursor:pointer;transition:color .15s,background .15s" style-hover="color:#f2f2f7;background:#17171d">Home</div>
           <div onClick="{{ goBrowse }}" style="padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600;color:{{ navBrowseColor }};cursor:pointer;transition:color .15s,background .15s" style-hover="color:#f2f2f7;background:#17171d">Browse</div>
+          <div onClick="{{ goForums }}" style="padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600;color:{{ navForumsColor }};cursor:pointer;transition:color .15s,background .15s" style-hover="color:#f2f2f7;background:#17171d">Forums</div>
           <div onClick="{{ goBookmarks }}" style="padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600;color:{{ navBookmarksColor }};cursor:pointer;transition:color .15s,background .15s" style-hover="color:#f2f2f7;background:#17171d">Bookmarks</div>
         </div>
 
@@ -119,7 +125,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                     {{ u.avatarImg }}
                     <div style="min-width:0;display:flex;align-items:center;gap:8px">
                       <span style="font-size:14.5px;font-weight:600;color:#e9e9ef">{{ u.name }}</span>
-                      <sc-if value="{{ u.isAdmin }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.35)">ADMIN</span></sc-if>
+                      <sc-if value="{{ u.isAdmin }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34);box-shadow:0 1px 6px rgba(216,169,78,.25)">ADMIN</span></sc-if>
                     </div>
                   </div>
                 </sc-for>
@@ -187,7 +193,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                 <div onClick="{{ toggleUserMenu }}" style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:3px 8px 3px 3px;border-radius:20px;transition:background .15s" style-hover="background:#1c1c24">
                   {{ userAvatarImg }}
                   <span class="vpx-username" style="font-size:14px;font-weight:600;color:#d5d5de">{{ userName }}</span>
-                  <sc-if value="{{ userIsAdmin }}"><span class="vpx-username" style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.35)">ADMIN</span></sc-if>
+                  <sc-if value="{{ userIsAdmin }}"><span class="vpx-username" style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34);box-shadow:0 1px 6px rgba(216,169,78,.25)">ADMIN</span></sc-if>
                   <svg class="vpx-username" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a8a98" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
                 </div>
                 <sc-if value="{{ userMenuOpen }}">
@@ -256,7 +262,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
         <div style="margin-bottom:36px">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
             <h2 style="font-size:22px;font-weight:800;margin:0;letter-spacing:-.2px">Your Library</h2>
-            <span style="font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:6px;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.35)">SELF-HOSTED</span>
+            <span style="font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:6px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34);box-shadow:0 1px 6px rgba(216,169,78,.25)">SELF-HOSTED</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px">
             <sc-for list="{{ libCards }}" as="m" hint-placeholder-count="0">
@@ -475,6 +481,18 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="{{ followFill }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                 {{ followLabel }}
               </button>
+              <div style="margin-top:12px;background:#131318;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 10px;text-align:center">
+                <div style="font-size:10.5px;font-weight:800;letter-spacing:1.4px;color:#8a8a98;margin-bottom:10px">{{ myRatingTitle }}</div>
+                <div onMouseLeave="{{ starLeave }}" style="display:flex;justify-content:center;gap:5px">
+                  <sc-for list="{{ ratingStarsInline }}" as="st" hint-placeholder-count="5">
+                    <div style="position:relative;width:26px;height:26px;cursor:pointer">
+                      <div onClick="{{ st.pickHalf }}" onMouseEnter="{{ st.hoverHalf }}" style="position:absolute;left:0;top:0;width:50%;height:100%;z-index:2"></div>
+                      <div onClick="{{ st.pickFull }}" onMouseEnter="{{ st.hoverFull }}" style="position:absolute;right:0;top:0;width:50%;height:100%;z-index:2"></div>
+                      {{ st.icon }}
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
             </div>
 
             <div style="min-width:0">
@@ -503,10 +521,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                   <span style="font-weight:800;font-size:16px">{{ series.rating }}</span>
                   <span style="color:#8a8a98">&middot; {{ series.follows }} followed</span>
                 </div>
-                <button onClick="{{ openRating }}" style="display:inline-flex;align-items:center;gap:7px;background:#17171d;border:1px solid rgba(255,255,255,.09);border-radius:9px;padding:7px 15px;font-size:13.5px;font-weight:700;color:#e9e9ef;cursor:pointer;transition:all .15s" style-hover="border-color:rgba(250,204,21,.5);color:#facc15">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                  {{ myRatingLabel }}
-                </button>
+
               </div>
 
               <sc-if value="{{ series.desc }}">
@@ -540,7 +555,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                 <div style="font-size:12px;font-weight:700;letter-spacing:1.6px;color:#8a8a98;margin-top:22px">AUTHORS</div>
                 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
                   <sc-for list="{{ authorChips }}" as="a" hint-placeholder-count="0">
-                    <span onClick="{{ a.open }}" style="background:#1b1b22;border:1px solid rgba(255,255,255,.06);border-radius:999px;padding:6px 14px;font-size:13px;color:#c9c9d4;cursor:pointer;transition:all .18s" style-hover="background:rgba(216,169,78,.16);border-color:rgba(216,169,78,.45);color:#eecf8f;transform:translateY(-1px)">{{ a.name }}</span>
+                    <span onClick="{{ a.open }}" style="background:#1b1b22;border:1px solid rgba(255,255,255,.06);border-radius:999px;padding:6px 14px;font-size:13px;color:#c9c9d4;cursor:pointer;transition:border-color .8s ease,color .8s ease" style-hover="border-color:rgba(216,169,78,.7);color:#eecf8f">{{ a.name }}</span>
                   </sc-for>
                 </div>
               </sc-if>
@@ -586,7 +601,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
           </div>
 
           <!-- Reactions + Comments (Asura-style) -->
-          <div style="margin-top:56px;max-width:920px">
+          <div style="margin-top:56px">
             <div style="background:#111116;border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:26px 24px;text-align:center">
               <div style="font-size:18px;font-weight:800">What did you think of this series?</div>
               <div style="font-size:13px;color:#8a8a98;margin-top:4px">{{ srReactTotal }} reactions</div>
@@ -614,10 +629,25 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
               <div style="display:flex;gap:14px;margin-bottom:28px">
                 {{ userAvatarImgMd }}
                 <div style="flex:1">
-                  <textarea value="{{ commentText }}" onChange="{{ onCommentText }}" placeholder="Write a comment..." style="width:100%;min-height:84px;background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;font-size:14.5px;color:#e9e9ef;resize:vertical;outline:none;line-height:1.6" style-focus="border-color:rgba(216,169,78,.5)"></textarea>
-                  <div style="display:flex;justify-content:flex-end;margin-top:10px">
-                    <button onClick="{{ addComment }}" style="background:#d8a94e;color:#171006;border:none;border-radius:9px;padding:9px 22px;font-size:14px;font-weight:700;cursor:pointer;opacity:{{ postOpacity }};transition:all .15s" style-hover="background:#e4b95e">Post</button>
+                  <div style="background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden">
+                    <textarea ref="{{ cmBoxRef }}" value="{{ commentText }}" onChange="{{ onCommentText }}" placeholder="Write a comment..." style="width:100%;min-height:84px;background:transparent;border:none;padding:12px 14px;font-size:14.5px;color:#e9e9ef;resize:vertical;outline:none;line-height:1.6;display:block"></textarea>
+                    {{ commentImgRow }}
+                    <div style="display:flex;align-items:center;gap:2px;padding:6px 8px;border-top:1px solid rgba(255,255,255,.05)">
+                      <div onClick="{{ cmBold }}" title="Bold" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-weight:800" style-hover="background:#22222b;color:#fff">B</div>
+                      <div onClick="{{ cmItalic }}" title="Italic" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-style:italic;font-family:Georgia,serif" style-hover="background:#22222b;color:#fff">I</div>
+                      <div onClick="{{ cmStrike }}" title="Strikethrough" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;text-decoration:line-through" style-hover="background:#22222b;color:#fff">S</div>
+                      <div onClick="{{ cmSpoiler }}" title="Spoiler (click-to-reveal)" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-weight:800;font-size:12px" style-hover="background:#22222b;color:#fff">&#124;&#124;</div>
+                      <label title="Add image" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s" style-hover="background:#22222b;color:#fff">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+                        <input type="file" accept="image/*" onChange="{{ cmImgFile }}" style="display:none"/>
+                      </label>
+                      <div onClick="{{ cmGif }}" title="Add a GIF" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-size:10px;font-weight:800;letter-spacing:.5px" style-hover="background:#22222b;color:#fff">GIF</div>
+                      <div style="flex:1"></div>
+                      <span style="font-size:11.5px;color:#6d6d7c">{{ commentCharCount }}</span>
+                      <button onClick="{{ addComment }}" style="margin-left:10px;background:#d8a94e;color:#171006;border:none;border-radius:8px;padding:8px 20px;font-size:13.5px;font-weight:700;cursor:pointer;opacity:{{ postOpacity }};transition:all .15s" style-hover="background:#e4b95e">Post</button>
+                    </div>
                   </div>
+                  {{ giphyPanelSeries }}
                 </div>
               </div>
             </sc-if>
@@ -639,10 +669,10 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                   <div style="min-width:0;flex:1">
                     <div style="display:flex;align-items:center;gap:10px">
                       <span onClick="{{ cm.openProfile }}" style="font-size:14.5px;font-weight:700;cursor:pointer">{{ cm.name }}</span>
-                      <sc-if value="{{ cm.isAdmin }}"><span style="font-size:9.5px;font-weight:800;letter-spacing:1px;padding:2px 8px;border-radius:5px;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.35)">ADMIN</span></sc-if>
+                      <sc-if value="{{ cm.isAdmin }}"><span style="font-size:9.5px;font-weight:800;letter-spacing:1px;padding:2px 8px;border-radius:5px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34);box-shadow:0 1px 6px rgba(216,169,78,.25)">ADMIN</span></sc-if>
                       <span style="font-size:12.5px;color:#8a8a98">{{ cm.ago }}</span>
                     </div>
-                    <div style="font-size:15px;color:#c9c9d4;line-height:1.65;margin-top:5px;white-space:pre-line">{{ cm.text }}</div>
+                    {{ cm.rich }}
                     <div style="display:flex;align-items:center;gap:18px;margin-top:9px">
                       <div onClick="{{ cm.upvote }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:{{ cm.upColor }};cursor:pointer">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="{{ cm.upFill }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg>
@@ -655,6 +685,16 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                       <div onClick="{{ cm.toggleReply }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#8a8a98;cursor:pointer" style-hover="color:#e9e9ef">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
                         Reply
+                      </div>
+                      <div style="position:relative">
+                        <div onClick="{{ cm.toggleMenu }}" style="display:inline-flex;align-items:center;font-size:16px;font-weight:800;color:#8a8a98;cursor:pointer;padding:0 7px;border-radius:6px;line-height:1" style-hover="color:#e9e9ef">&#8943;</div>
+                        <sc-if value="{{ cm.menuOpen }}">
+                          <div onClick="{{ cm.toggleMenu }}" style="position:fixed;inset:0;z-index:88"></div>
+                          <div style="position:absolute;top:24px;left:0;z-index:89;width:180px;background:#17171d;border:1px solid rgba(255,255,255,.09);border-radius:11px;box-shadow:0 14px 40px rgba(0,0,0,.55);padding:5px;animation:vpx-pop .15s ease">
+                            <div onClick="{{ cm.report }}" style="padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;color:#d5d5de;cursor:pointer;transition:background .12s" style-hover="background:#22222b">Report comment</div>
+                            <sc-if value="{{ cm.canBlock }}"><div onClick="{{ cm.block }}" style="padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;color:#f87171;cursor:pointer;transition:background .12s" style-hover="background:rgba(248,113,113,.1)">Block {{ cm.name }}</div></sc-if>
+                          </div>
+                        </sc-if>
                       </div>
                     </div>
 
@@ -673,10 +713,10 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                             <div style="min-width:0;flex:1">
                               <div style="display:flex;align-items:center;gap:9px">
                                 <span onClick="{{ rp.openProfile }}" style="font-size:13.5px;font-weight:700;cursor:pointer">{{ rp.name }}</span>
-                                <sc-if value="{{ rp.isAdmin }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.35)">ADMIN</span></sc-if>
+                                <sc-if value="{{ rp.isAdmin }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34);box-shadow:0 1px 6px rgba(216,169,78,.25)">ADMIN</span></sc-if>
                                 <span style="font-size:12px;color:#8a8a98">{{ rp.ago }}</span>
                               </div>
-                              <div style="font-size:14px;color:#c9c9d4;line-height:1.55;margin-top:4px;white-space:pre-line">{{ rp.text }}</div>
+                              {{ rp.rich }}
                               <div style="display:flex;align-items:center;gap:16px;margin-top:7px">
                                 <div onClick="{{ rp.upvote }}" style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:{{ rp.upColor }};cursor:pointer">
                                   <svg width="13" height="13" viewBox="0 0 24 24" fill="{{ rp.upFill }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg>
@@ -719,6 +759,9 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
           <div onClick="{{ scrollBottomBtn }}" title="Jump to comments" style="display:inline-flex;align-items:center;gap:6px;background:#17171d;border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:8px 12px;font-size:13px;font-weight:600;color:#c9c9d4;cursor:pointer;flex:0 0 auto" style-hover="background:#22222b;color:#fff">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
             {{ readerCommentCount }}
+          </div>
+          <div onClick="{{ reportChapter }}" title="Report a problem with this chapter" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#17171d;border:1px solid rgba(255,255,255,.07);color:#8a8a98;cursor:pointer;flex:0 0 auto;transition:all .2s" style-hover="color:#f87171;border-color:rgba(248,113,113,.4)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
           </div>
         </div>
       </div>
@@ -778,10 +821,25 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
               <div style="display:flex;gap:12px;margin-bottom:22px">
                 {{ userAvatarImgMd }}
                 <div style="flex:1">
-                  <textarea value="{{ readerCommentText }}" onChange="{{ onReaderCommentText }}" placeholder="Write a comment..." style="width:100%;min-height:80px;background:#141419;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;font-size:14.5px;color:#e9e9ef;resize:vertical;outline:none;line-height:1.6" style-focus="border-color:rgba(216,169,78,.5)"></textarea>
-                  <div style="display:flex;justify-content:flex-end;margin-top:8px">
-                    <button onClick="{{ addReaderComment }}" style="background:#d8a94e;color:#171006;border:none;border-radius:9px;padding:9px 22px;font-size:14px;font-weight:700;cursor:pointer;opacity:{{ readerPostOpacity }};transition:all .15s" style-hover="background:#e4b95e">Post</button>
+                  <div style="background:#141419;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden">
+                    <textarea ref="{{ rdBoxRef }}" value="{{ readerCommentText }}" onChange="{{ onReaderCommentText }}" placeholder="Write a comment..." style="width:100%;min-height:80px;background:transparent;border:none;padding:12px 14px;font-size:14.5px;color:#e9e9ef;resize:vertical;outline:none;line-height:1.6;display:block"></textarea>
+                    {{ readerImgRow }}
+                    <div style="display:flex;align-items:center;gap:2px;padding:6px 8px;border-top:1px solid rgba(255,255,255,.05)">
+                      <div onClick="{{ rdBold }}" title="Bold" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-weight:800" style-hover="background:#22222b;color:#fff">B</div>
+                      <div onClick="{{ rdItalic }}" title="Italic" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-style:italic;font-family:Georgia,serif" style-hover="background:#22222b;color:#fff">I</div>
+                      <div onClick="{{ rdStrike }}" title="Strikethrough" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;text-decoration:line-through" style-hover="background:#22222b;color:#fff">S</div>
+                      <div onClick="{{ rdSpoiler }}" title="Spoiler (click-to-reveal)" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-weight:800;font-size:12px" style-hover="background:#22222b;color:#fff">&#124;&#124;</div>
+                      <label title="Add image" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s" style-hover="background:#22222b;color:#fff">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+                        <input type="file" accept="image/*" onChange="{{ rdImgFile }}" style="display:none"/>
+                      </label>
+                      <div onClick="{{ rdGif }}" title="Add a GIF" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;color:#9b9ba9;cursor:pointer;transition:all .15s;font-size:10px;font-weight:800;letter-spacing:.5px" style-hover="background:#22222b;color:#fff">GIF</div>
+                      <div style="flex:1"></div>
+                      <span style="font-size:11.5px;color:#6d6d7c">{{ readerCharCount }}</span>
+                      <button onClick="{{ addReaderComment }}" style="margin-left:10px;background:#d8a94e;color:#171006;border:none;border-radius:8px;padding:8px 20px;font-size:13.5px;font-weight:700;cursor:pointer;opacity:{{ readerPostOpacity }};transition:all .15s" style-hover="background:#e4b95e">Post</button>
+                    </div>
                   </div>
+                  {{ giphyPanelReader }}
                 </div>
               </div>
             </sc-if>
@@ -806,7 +864,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                       <sc-if value="{{ cm.isAdmin }}"><span style="font-size:10px;font-weight:800;letter-spacing:1px;padding:2px 8px;border-radius:6px;color:#eecf8f;background:rgba(216,169,78,.13);border:1px solid rgba(216,169,78,.32)">ADMIN</span></sc-if>
                       <span style="font-size:12.5px;color:#8a8a98">{{ cm.ago }}</span>
                     </div>
-                    <div style="font-size:14.5px;color:#c9c9d4;line-height:1.6;margin-top:5px;white-space:pre-line">{{ cm.text }}</div>
+                    {{ cm.rich }}
                     <div style="display:flex;align-items:center;gap:16px;margin-top:8px">
                       <div onClick="{{ cm.like }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:{{ cm.likeColor }};cursor:pointer">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="{{ cm.likeFill }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg>
@@ -815,6 +873,16 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                       <div onClick="{{ cm.toggleReply }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#8a8a98;cursor:pointer" style-hover="color:#e9e9ef">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
                         Reply
+                      </div>
+                      <div style="position:relative">
+                        <div onClick="{{ cm.toggleMenu }}" style="display:inline-flex;align-items:center;font-size:16px;font-weight:800;color:#8a8a98;cursor:pointer;padding:0 7px;border-radius:6px;line-height:1" style-hover="color:#e9e9ef">&#8943;</div>
+                        <sc-if value="{{ cm.menuOpen }}">
+                          <div onClick="{{ cm.toggleMenu }}" style="position:fixed;inset:0;z-index:88"></div>
+                          <div style="position:absolute;top:24px;left:0;z-index:89;width:180px;background:#17171d;border:1px solid rgba(255,255,255,.09);border-radius:11px;box-shadow:0 14px 40px rgba(0,0,0,.55);padding:5px;animation:vpx-pop .15s ease">
+                            <div onClick="{{ cm.report }}" style="padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;color:#d5d5de;cursor:pointer;transition:background .12s" style-hover="background:#22222b">Report comment</div>
+                            <sc-if value="{{ cm.canBlock }}"><div onClick="{{ cm.block }}" style="padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;color:#f87171;cursor:pointer;transition:background .12s" style-hover="background:rgba(248,113,113,.1)">Block {{ cm.name }}</div></sc-if>
+                          </div>
+                        </sc-if>
                       </div>
                     </div>
 
@@ -835,7 +903,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
                               <sc-if value="{{ rp.isAdmin }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:6px;color:#eecf8f;background:rgba(216,169,78,.13);border:1px solid rgba(216,169,78,.32)">ADMIN</span></sc-if>
                               <span style="font-size:12px;color:#8a8a98">{{ rp.ago }}</span>
                             </div>
-                            <div style="font-size:14px;color:#c9c9d4;line-height:1.55;margin-top:3px;white-space:pre-line">{{ rp.text }}</div>
+                            {{ rp.rich }}
                           </div>
                         </div>
                       </sc-for>
@@ -1004,45 +1072,67 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
 
   <!-- ============ PROFILE ============ -->
   <sc-if value="{{ isProfile }}">
-    <div style="max-width:1040px;margin:0 auto;padding:28px 22px 80px">
-      <div onClick="{{ goHome }}" style="display:inline-flex;align-items:center;gap:8px;color:#8a8a98;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:26px;transition:color .15s" style-hover="color:#e9e9ef">
+    <div style="max-width:1080px;margin:0 auto;padding:28px 22px 80px">
+      <div onClick="{{ goHome }}" style="display:inline-flex;align-items:center;gap:8px;color:#8a8a98;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:22px;transition:color .15s" style-hover="color:#e9e9ef">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
         Back
       </div>
 
-      <!-- Header row -->
-      <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap">
-        <div style="position:relative;flex:0 0 auto">
-          {{ profileAvatarImg }}
+      <div style="position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.07);background:#111116">
+        <div style="position:relative;height:190px;overflow:hidden">
+          {{ profileBannerEl }}
+          <div style="position:absolute;inset:auto 0 0 0;height:90px;background:linear-gradient(transparent,rgba(13,13,17,.94))"></div>
           <sc-if value="{{ profile.isMe }}">
-            <div onClick="{{ toggleAvatarPick }}" title="Change photo" style="position:absolute;bottom:-6px;right:-6px;width:32px;height:32px;border-radius:50%;background:#d8a94e;border:3px solid #0c0c10;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#e4b95e">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
-            </div>
+            <label style="position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:7px;background:rgba(12,12,16,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:8px 14px;font-size:12.5px;font-weight:600;color:#e9e9ef;cursor:pointer;transition:border-color .2s" style-hover="border-color:rgba(216,169,78,.5)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+              Change banner
+              <input type="file" accept="image/*" onChange="{{ onBannerFile }}" style="display:none"/>
+            </label>
           </sc-if>
         </div>
-        <div style="flex:1;min-width:0;padding-top:4px">
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-            <h1 style="font-size:26px;font-weight:800;margin:0;letter-spacing:-.3px">{{ profile.name }}</h1>
-            <sc-if value="{{ profile.isAdmin }}"><span style="font-size:10px;font-weight:800;letter-spacing:1.4px;padding:3px 10px;border-radius:6px;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.35)">ADMIN</span></sc-if>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:#8a8a98;margin-top:7px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
-            Joined {{ profile.joinedLabel }}
+        <div style="position:relative;padding:0 26px 24px;margin-top:-46px">
+          <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap">
+            <div style="position:relative;flex:0 0 auto;border-radius:26px;border:3px solid #111116;background:#111116">
+              {{ profileAvatarImg }}
+              <sc-if value="{{ profile.isMe }}">
+                <div onClick="{{ toggleAvatarPick }}" title="Change photo" style="position:absolute;bottom:-6px;right:-6px;width:32px;height:32px;border-radius:50%;background:#d8a94e;border:3px solid #111116;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#e4b95e">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#171006" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+                </div>
+              </sc-if>
+            </div>
+            <div style="flex:1;min-width:220px;padding-bottom:4px">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <h1 style="font-size:26px;font-weight:800;margin:0;letter-spacing:-.3px">{{ profile.name }}</h1>
+                <sc-if value="{{ profile.isAdmin }}">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="#d8a94e" style="flex:0 0 auto"><path d="M12 1.8l2.4 2.3 3.3-.4 1 3.2 2.9 1.6-1.2 3.1 1.2 3.1-2.9 1.6-1 3.2-3.3-.4-2.4 2.3-2.4-2.3-3.3.4-1-3.2-2.9-1.6 1.2-3.1L2.4 8.5l2.9-1.6 1-3.2 3.3.4z"></path><path d="M10.7 15.2l-2.8-2.8 1.2-1.2 1.6 1.6 4.2-4.2 1.2 1.2z" fill="#171006"></path></svg>
+                  <span style="font-size:10px;font-weight:800;letter-spacing:1.2px;padding:3px 10px;border-radius:6px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34);box-shadow:0 1px 6px rgba(216,169,78,.25)">ADMIN</span>
+                </sc-if>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#8a8a98;margin-top:6px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+                Joined {{ profile.joinedLabel }}
+              </div>
+            </div>
+            <sc-if value="{{ profile.isMe }}">
+              <div onClick="{{ menuSettings }}" style="display:inline-flex;align-items:center;gap:7px;background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;color:#c9c9d4;cursor:pointer;margin-bottom:6px;transition:all .15s" style-hover="background:#20202a;color:#fff">Edit profile</div>
+            </sc-if>
           </div>
           <sc-if value="{{ profile.bio }}">
-            <div style="margin-top:12px;font-size:14.5px;color:#c9c9d4;line-height:1.6;max-width:620px">{{ profile.bio }}</div>
+            <div style="margin-top:14px;font-size:14.5px;color:#c9c9d4;line-height:1.6;max-width:640px">{{ profile.bio }}</div>
           </sc-if>
-          <sc-if value="{{ profile.isMe }}">
-            <div onClick="{{ menuSettings }}" style="display:inline-flex;align-items:center;gap:7px;margin-top:14px;background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:8px 16px;font-size:13.5px;font-weight:600;color:#c9c9d4;cursor:pointer;transition:all .15s" style-hover="background:#20202a;color:#fff">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              Edit profile
-            </div>
-          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:18px">
+            <sc-for list="{{ profileStats }}" as="st" hint-placeholder-count="4">
+              <div style="background:#15151b;border:1px solid rgba(255,255,255,.05);border-radius:11px;padding:13px 16px">
+                <div style="font-size:21px;font-weight:800;color:#eecf8f">{{ st.value }}</div>
+                <div style="font-size:11px;color:#8a8a98;margin-top:2px;letter-spacing:.6px">{{ st.label }}</div>
+              </div>
+            </sc-for>
+          </div>
         </div>
       </div>
 
       <sc-if value="{{ avatarPicking }}">
-        <div style="margin-top:20px;background:#111116;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px;animation:vpx-fadeup .26s cubic-bezier(.16,1,.3,1)">
+        <div style="margin-top:18px;background:#111116;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px;animation:vpx-fadeup .26s cubic-bezier(.16,1,.3,1)">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
             <div style="font-size:13.5px;font-weight:700;color:#c9c9d4">Choose an avatar</div>
             <label style="display:inline-flex;align-items:center;gap:7px;background:#d8a94e;color:#171006;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s" style-hover="background:#e4b95e">
@@ -1060,27 +1150,88 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
         </div>
       </sc-if>
 
-      <!-- Stats -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:26px">
-        <sc-for list="{{ profileStats }}" as="st" hint-placeholder-count="4">
-          <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:16px 18px">
-            <div style="font-size:24px;font-weight:800;color:#e9e9ef">{{ st.value }}</div>
-            <div style="font-size:12px;color:#8a8a98;margin-top:3px;letter-spacing:.3px">{{ st.label }}</div>
-          </div>
-        </sc-for>
+      <div style="display:flex;gap:6px;background:#141419;border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:5px;margin:20px 0 26px">
+        <div onClick="{{ profTabOverview }}" style="flex:1;text-align:center;padding:10px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:{{ pTabOvBg }};color:{{ pTabOvColor }};transition:all .15s">Overview</div>
+        <sc-if value="{{ showCommentsTab }}">
+          <div onClick="{{ profTabComments }}" style="flex:1;text-align:center;padding:10px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:{{ pTabCmBg }};color:{{ pTabCmColor }};transition:all .15s">Comments ({{ profCommentCount }})</div>
+        </sc-if>
       </div>
 
-      <!-- Favourites -->
-      <sc-if value="{{ profile.isMe }}">
-        <div style="margin-top:40px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-            <h2 style="font-size:19px;font-weight:800;margin:0">Library</h2>
-            <sc-if value="{{ hasFavourites }}"><span onClick="{{ menuBookmarks }}" style="font-size:13px;font-weight:600;color:#dfae52;cursor:pointer">View all</span></sc-if>
+      <sc-if value="{{ profTabOverviewActive }}">
+        <sc-if value="{{ showFavsSection }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;letter-spacing:1.6px;color:#8a8a98">FAVOURITES</div>
+            <sc-if value="{{ profile.isMe }}"><span onClick="{{ toggleFavPick }}" style="font-size:12.5px;font-weight:600;color:#dfae52;cursor:pointer;padding:3px 8px;border-radius:6px;transition:background .15s" style-hover="background:rgba(216,169,78,.1)">{{ favPickLabel }}</span></sc-if>
+          </div>
+          <sc-if value="{{ favPicking }}">
+            <div style="background:#111116;border:1px solid rgba(216,169,78,.25);border-radius:14px;padding:16px;margin-bottom:16px;animation:vpx-fadeup .25s ease">
+              <div style="font-size:13px;color:#9b9ba9;margin-bottom:12px">Pick up to 6 from your bookmarks ({{ favCount }}/6):</div>
+              <sc-if value="{{ noFavChoices }}"><div style="font-size:13px;color:#6d6d7c">Bookmark some series first &mdash; your bookmarks appear here.</div></sc-if>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px">
+                <sc-for list="{{ favChoices }}" as="f" hint-placeholder-count="0">
+                  <div onClick="{{ f.toggle }}" style="cursor:pointer">
+                    <div role="img" aria-label="{{ f.title }}" style="aspect-ratio:5/7;border-radius:9px;background-color:#17171d;background-image:url('{{ f.cover }}');background-size:cover;background-position:center top;border:2px solid {{ f.border }};transition:border-color .2s;opacity:{{ f.opacity }}"></div>
+                    <div style="margin-top:6px;font-size:11px;font-weight:600;color:#c9c9d4;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ f.title }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ hasProfFavs }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;margin-bottom:36px">
+              <sc-for list="{{ profFavs }}" as="m" hint-placeholder-count="0">
+                <div onClick="{{ m.open }}" style="cursor:pointer">
+                  <div role="img" aria-label="{{ m.title }}" style="aspect-ratio:5/7;border-radius:10px;background-color:#17171d;background-image:url('{{ m.cover }}');background-size:cover;background-position:center top;border:1px solid rgba(216,169,78,.3);transition:transform .25s" style-hover="transform:translateY(-3px)"></div>
+                  <div style="margin-top:8px;font-size:12.5px;font-weight:600;color:#e9e9ef;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ m.title }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noProfFavs }}">
+            <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:26px 20px;text-align:center;color:#6d6d7c;font-size:13.5px;margin-bottom:36px">No favourites picked yet.</div>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ showHistorySection }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;letter-spacing:1.6px;color:#8a8a98">{{ historyTitle }}</div>
+            <sc-if value="{{ canClearHistory }}"><span onClick="{{ clearHistory }}" style="font-size:12.5px;font-weight:600;color:#8a8a98;cursor:pointer;padding:3px 8px;border-radius:6px;transition:color .15s" style-hover="color:#f87171">Clear</span></sc-if>
+          </div>
+          <sc-if value="{{ noProfHistory }}"><div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:26px 20px;text-align:center;color:#6d6d7c;font-size:13.5px;margin-bottom:36px">Nothing read yet.</div></sc-if>
+          <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:36px">
+            <sc-for list="{{ profHistory }}" as="h" hint-placeholder-count="0">
+              <div onClick="{{ h.open }}" style="display:flex;align-items:center;gap:14px;background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:10px 14px;cursor:pointer;transition:border-color .2s,transform .15s" style-hover="border-color:rgba(216,169,78,.35);transform:translateX(3px)">
+                <div role="img" aria-label="{{ h.title }}" style="width:40px;height:54px;border-radius:6px;flex:0 0 auto;background-color:#1c1c24;background-image:url('{{ h.cover }}');background-size:cover;background-position:center top"></div>
+                <div style="min-width:0;flex:1">
+                  <div style="font-size:14px;font-weight:700;color:#e9e9ef;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.title }}</div>
+                  <div style="font-size:12.5px;color:#dfae52;font-weight:600;margin-top:2px">{{ h.label }}</div>
+                </div>
+                <div style="font-size:12px;color:#6d6d7c;flex:0 0 auto">{{ h.ago }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="font-size:12px;font-weight:800;letter-spacing:1.6px;color:#8a8a98;margin-bottom:14px">ACHIEVEMENTS</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:36px">
+          <sc-for list="{{ achievements }}" as="ac" hint-placeholder-count="6">
+            <div title="{{ ac.d }}" style="background:#111116;border:1px solid {{ ac.border }};border-radius:13px;padding:16px 14px;text-align:center;opacity:{{ ac.opacity }};transition:transform .2s" style-hover="transform:translateY(-2px)">
+              <div style="font-size:26px;line-height:1">{{ ac.e }}</div>
+              <div style="font-size:13px;font-weight:700;color:#e9e9ef;margin-top:8px">{{ ac.n }}</div>
+              <div style="font-size:11px;color:#8a8a98;margin-top:3px;line-height:1.4">{{ ac.d }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ profile.isMe }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;letter-spacing:1.6px;color:#8a8a98">LIBRARY</div>
+            <sc-if value="{{ hasFavourites }}"><span onClick="{{ menuBookmarks }}" style="font-size:12.5px;font-weight:600;color:#dfae52;cursor:pointer">View all</span></sc-if>
           </div>
           <sc-if value="{{ noFavourites }}">
-            <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:36px 20px;text-align:center;color:#8a8a98;font-size:14px">No bookmarks yet. Follow a series to build your library.</div>
+            <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:26px 20px;text-align:center;color:#6d6d7c;font-size:13.5px">No bookmarks yet. Follow a series to build your library.</div>
           </sc-if>
-          <div class="vpx-browse-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px">
             <sc-for list="{{ favourites }}" as="m" hint-placeholder-count="0">
               <div onClick="{{ m.open }}" style="cursor:pointer">
                 <div role="img" aria-label="{{ m.title }}" style="aspect-ratio:5/7;border-radius:10px;background-color:#17171d;background-image:url('{{ m.cover }}');background-size:cover;background-position:center top;border:1px solid rgba(255,255,255,.05);transition:transform .25s" style-hover="transform:translateY(-3px)"></div>
@@ -1088,29 +1239,25 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
               </div>
             </sc-for>
           </div>
-        </div>
+        </sc-if>
       </sc-if>
 
-      <!-- Recent activity -->
-      <div style="margin-top:40px">
-        <h2 style="font-size:19px;font-weight:800;margin:0 0 16px">Recent activity</h2>
-        <sc-if value="{{ noActivity }}">
-          <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:36px 20px;text-align:center;color:#8a8a98;font-size:14px">No comments yet.</div>
-        </sc-if>
+      <sc-if value="{{ profTabCommentsActive }}">
+        <sc-if value="{{ noProfComments }}"><div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:36px 20px;text-align:center;color:#8a8a98;font-size:14px">No comments yet.</div></sc-if>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <sc-for list="{{ activity }}" as="a" hint-placeholder-count="0">
-            <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:16px 18px">
-              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#8a8a98">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                Commented &middot; {{ a.ago }}
+          <sc-for list="{{ profComments }}" as="a" hint-placeholder-count="0">
+            <div onClick="{{ a.open }}" style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:12px;padding:16px 18px;cursor:{{ a.cursor }};transition:border-color .2s" style-hover="border-color:rgba(216,169,78,.3)">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#8a8a98;flex-wrap:wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <sc-if value="{{ a.series }}"><span style="color:#dfae52;font-weight:600">{{ a.series }}</span><span style="color:#4a4a56">&middot;</span></sc-if>
+                <span>{{ a.ago }}</span>
               </div>
-              <div style="font-size:14.5px;color:#c9c9d4;line-height:1.55;margin-top:8px;white-space:pre-line">{{ a.text }}</div>
+              <div style="font-size:14.5px;color:#c9c9d4;line-height:1.55;margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line">{{ a.text }}</div>
             </div>
           </sc-for>
         </div>
-      </div>
+      </sc-if>
     </div>
-  </sc-if>
   </sc-if>
 
   <!-- ============ AVATAR CROP MODAL ============ -->
@@ -1133,24 +1280,6 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
           <button onClick="{{ cancelCrop }}" style="flex:1;background:#22222b;color:#e9e9ef;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s" style-hover="background:#2a2a35">Cancel</button>
           <button onClick="{{ saveCrop }}" style="flex:1;background:#d8a94e;color:#171006;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s" style-hover="background:#e4b95e;transform:translateY(-1px)">Save photo</button>
         </div>
-      </div>
-    </div>
-  </sc-if>
-
-  <!-- ============ RATING MODAL ============ -->
-  <sc-if value="{{ ratingOpen }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ closeRating }}" style="position:fixed;inset:0;z-index:120;background:rgba(6,6,9,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;animation:vpx-fadein .2s ease">
-      <div onClick="{{ stop }}" style="width:100%;max-width:360px;background:#141419;border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:28px;text-align:center;animation:vpx-fadeup .28s cubic-bezier(.16,1,.3,1)">
-        <div style="font-size:18px;font-weight:800">Rate this series</div>
-        <div style="font-size:13.5px;color:#8a8a98;margin-top:4px">How would you rate it?</div>
-        <div style="display:flex;justify-content:center;gap:8px;margin-top:22px">
-          <sc-for list="{{ ratingStars }}" as="st" hint-placeholder-count="5">
-            <div onClick="{{ st.pick }}" onMouseEnter="{{ st.hover }}" onMouseLeave="{{ st.leave }}" style="cursor:pointer;transition:transform .12s" style-hover="transform:scale(1.15)">
-              <svg width="38" height="38" viewBox="0 0 24 24" fill="{{ st.color }}" stroke="{{ st.color }}" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-            </div>
-          </sc-for>
-        </div>
-        <button onClick="{{ closeRating }}" style="margin-top:24px;background:#22222b;color:#e9e9ef;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:10px 26px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s" style-hover="background:#2a2a35">Done</button>
       </div>
     </div>
   </sc-if>
@@ -1249,6 +1378,10 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
               </div>
             </sc-for>
           </div>
+
+          <sc-if value="{{ browseHasMore }}">
+            <button onClick="{{ loadMoreBrowse }}" style="width:100%;margin-top:22px;background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:14px;font-size:14.5px;font-weight:700;color:#e9e9ef;cursor:pointer;transition:border-color .3s,color .3s" style-hover="border-color:rgba(216,169,78,.5);color:#eecf8f">{{ loadMoreLabel }}</button>
+          </sc-if>
         </div>
       </div>
     </div>
@@ -1354,7 +1487,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
         <h1 style="font-size:30px;font-weight:800;margin:0;letter-spacing:-.4px;text-align:center">{{ annDetail.title }}</h1>
         <div style="display:flex;align-items:center;justify-content:center;gap:9px;margin-top:16px">
           {{ annDetailAvatarImg }}
-          <span style="font-size:13.5px;color:#8a8a98">By <span style="color:#dfae52;font-weight:700">{{ annDetail.author }}</span></span>
+          <span style="font-size:13.5px;color:#8a8a98">By <span onClick="{{ annDetail.openAuthor }}" style="color:#dfae52;font-weight:700;cursor:pointer;border-bottom:1px dotted rgba(216,169,78,.5)">{{ annDetail.author }}</span></span>
           <span style="color:#4a4a56">&middot;</span>
           <span style="font-size:13.5px;color:#8a8a98">{{ annDetail.dateFull }}</span>
         </div>
@@ -1387,8 +1520,8 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
           <div style="font-size:16px;font-weight:800;margin-bottom:18px">Profile</div>
           <div style="margin-bottom:18px">
             <div style="font-size:13px;font-weight:600;color:#c9c9d4;margin-bottom:7px">Username</div>
-            <input value="{{ setName }}" disabled="true" style="width:100%;background:#141419;border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:11px 13px;font-size:14.5px;color:#8a8a98;outline:none"/>
-            <div style="font-size:12px;color:#6d6d7c;margin-top:6px">Usernames can't be changed.</div>
+            <input value="{{ setName }}" onChange="{{ onSetName }}" style="width:100%;background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:11px 13px;font-size:14.5px;color:#e9e9ef;outline:none" style-focus="border-color:rgba(216,169,78,.5)"/>
+            <div style="font-size:12px;color:#6d6d7c;margin-top:6px">3+ characters, letters/numbers/underscores. Must not be taken. Old comments keep your previous name.</div>
           </div>
           <div style="margin-bottom:18px">
             <div style="font-size:13px;font-weight:600;color:#c9c9d4;margin-bottom:7px">Email</div>
@@ -1433,7 +1566,30 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
       <sc-if value="{{ dangerActive }}">
         <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:14px;padding:26px">
           <div style="font-size:16px;font-weight:800;margin-bottom:8px">Privacy &amp; data</div>
-          <div style="font-size:14px;color:#9b9ba9;line-height:1.6;margin-bottom:22px">Your library, ratings, and reading history are stored locally in your browser. Nothing is shared publicly except your comments and profile.</div>
+          <div style="font-size:14px;color:#9b9ba9;line-height:1.6;margin-bottom:20px">Control what other members can see on your profile.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:26px">
+            <sc-for list="{{ privacyRows }}" as="p" hint-placeholder-count="3">
+              <div onClick="{{ p.toggle }}" style="display:flex;align-items:center;justify-content:space-between;gap:14px;background:#15151b;border:1px solid rgba(255,255,255,.05);border-radius:11px;padding:13px 16px;cursor:pointer;user-select:none">
+                <div>
+                  <div style="font-size:13.5px;font-weight:700;color:#e9e9ef">{{ p.label }}</div>
+                  <div style="font-size:12px;color:#8a8a98;margin-top:2px">{{ p.desc }}</div>
+                </div>
+                <span style="width:38px;height:21px;border-radius:12px;background:{{ p.bg }};position:relative;transition:background .18s;display:inline-block;flex:0 0 auto"><span style="position:absolute;top:2.5px;left:{{ p.knob }};width:16px;height:16px;border-radius:50%;background:#fff;transition:left .18s"></span></span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:10px">Blocked users</div>
+          <sc-if value="{{ hasBlocked }}">
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:26px">
+              <sc-for list="{{ blockedUsers }}" as="b" hint-placeholder-count="0">
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#15151b;border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:10px 14px">
+                  <span style="font-size:13.5px;font-weight:600">{{ b.name }}</span>
+                  <span onClick="{{ b.unblock }}" style="font-size:12.5px;font-weight:600;color:#dfae52;cursor:pointer;padding:4px 10px;border-radius:7px;transition:background .15s" style-hover="background:rgba(216,169,78,.1)">Unblock</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noBlocked }}"><div style="font-size:13px;color:#6d6d7c;margin-bottom:26px">You haven't blocked anyone.</div></sc-if>
           <sc-if value="{{ canDelete }}">
             <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);border-radius:12px;padding:20px">
               <div style="font-size:14.5px;font-weight:700;color:#f87171">Delete account</div>
@@ -1461,6 +1617,142 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
     </div>
   </sc-if>
 
+  <!-- ============ FORUMS ============ -->
+  <sc-if value="{{ isForums }}">
+    <div style="max-width:920px;margin:0 auto;padding:28px 22px 80px;animation:vpx-fadein .3s ease">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px">
+        <div>
+          <h1 style="font-size:28px;font-weight:800;margin:0;letter-spacing:-.3px">Forums</h1>
+          <div style="font-size:14px;color:#8a8a98;margin-top:5px">Talk manhwa with the community.</div>
+        </div>
+        <sc-if value="{{ isLoggedIn }}">
+          <button onClick="{{ toggleForumComposer }}" style="background:#d8a94e;color:#171006;border:none;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s" style-hover="background:#e4b95e">New thread</button>
+        </sc-if>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px">
+        <sc-for list="{{ forumCats }}" as="c" hint-placeholder-count="5">
+          <div onClick="{{ c.pick }}" style="padding:8px 15px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:{{ c.bg }};color:{{ c.color }};border:1px solid {{ c.border }};transition:all .15s">{{ c.name }}</div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ forumComposerOpen }}">
+        <div style="background:#111116;border:1px solid rgba(216,169,78,.25);border-radius:15px;padding:20px;margin-bottom:22px;animation:vpx-fadeup .25s ease">
+          <input value="{{ ftTitle }}" onChange="{{ onFtTitle }}" placeholder="Thread title" style="width:100%;background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;font-size:15px;font-weight:600;color:#e9e9ef;outline:none;margin-bottom:12px" style-focus="border-color:rgba(216,169,78,.5)"/>
+          <textarea value="{{ ftBody }}" onChange="{{ onFtBody }}" placeholder="What do you want to talk about?" style="width:100%;min-height:110px;background:#17171d;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;font-size:14.5px;color:#e9e9ef;resize:vertical;outline:none;line-height:1.6;margin-bottom:14px" style-focus="border-color:rgba(216,169,78,.5)"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ ftCats }}" as="c" hint-placeholder-count="4">
+                <div onClick="{{ c.pick }}" style="padding:7px 13px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;background:{{ c.bg }};color:{{ c.color }};border:1px solid {{ c.border }};transition:all .15s">{{ c.name }}</div>
+              </sc-for>
+            </div>
+            <button onClick="{{ postThread }}" style="background:#d8a94e;color:#171006;border:none;border-radius:9px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;opacity:{{ postThreadOpacity }};transition:all .15s" style-hover="background:#e4b95e">Post thread</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isLoggedOut }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#15151b;border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:16px 20px;margin-bottom:22px">
+          <div style="font-size:14px;color:#9b9ba9">Sign in to start threads and reply.</div>
+          <button onClick="{{ goLogin }}" style="background:#22222b;color:#e9e9ef;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 18px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#2a2a35">Sign in</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noThreads }}">
+        <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:14px;padding:50px 20px;text-align:center;color:#8a8a98;font-size:14.5px">No threads here yet &mdash; start the first one.</div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <sc-for list="{{ forumThreads }}" as="t" hint-placeholder-count="0">
+          <div onClick="{{ t.open }}" style="display:flex;gap:15px;align-items:flex-start;background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:14px;padding:16px 18px;cursor:pointer;transition:border-color .2s,transform .15s" style-hover="border-color:rgba(216,169,78,.35);transform:translateY(-2px)">
+            {{ t.avatarEl }}
+            <div style="min-width:0;flex:1">
+              <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+                <span style="font-size:15.5px;font-weight:700;color:#e9e9ef">{{ t.title }}</span>
+                <span style="font-size:10px;font-weight:800;letter-spacing:.6px;padding:3px 9px;border-radius:6px;color:{{ t.catColor }};background:{{ t.catBg }}">{{ t.cat }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:#8a8a98;margin-top:5px">
+                <span onClick="{{ t.openAuthor }}" style="font-weight:600;color:#9b9ba9;cursor:pointer" style-hover="color:#eecf8f">{{ t.author }}</span>
+                <sc-if value="{{ t.isAdminAuthor }}"><span style="font-size:8.5px;font-weight:800;letter-spacing:1px;padding:1px 6px;border-radius:4px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34)">ADMIN</span></sc-if>
+                <span style="color:#4a4a56">&middot;</span>
+                <span>{{ t.ago }}</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;flex:0 0 auto;align-items:center">
+              <div onClick="{{ t.upvote }}" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:{{ t.upColor }};cursor:pointer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+                {{ t.up }}
+              </div>
+              <div style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#8a8a98">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                {{ t.replyCount }}
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ THREAD ============ -->
+  <sc-if value="{{ isThread }}">
+    <div style="max-width:860px;margin:0 auto;padding:28px 22px 80px;animation:vpx-fadein .3s ease">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:20px;min-width:0">
+        <span onClick="{{ goForumsCrumb }}" style="color:#8a8a98;cursor:pointer;flex:0 0 auto" style-hover="color:#e9e9ef">Forums</span>
+        <span style="color:#4a4a56">/</span>
+        <span style="color:#dfae52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ thread.title }}</span>
+      </div>
+      <div style="background:#111116;border:1px solid rgba(255,255,255,.055);border-radius:16px;padding:26px 26px 22px">
+        <div style="display:flex;align-items:center;gap:12px">
+          {{ thread.avatarEl }}
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span onClick="{{ thread.openAuthor }}" style="font-size:14.5px;font-weight:700;cursor:pointer" style-hover="color:#eecf8f">{{ thread.author }}</span>
+              <sc-if value="{{ thread.isAdminAuthor }}"><span style="font-size:8.5px;font-weight:800;letter-spacing:1px;padding:1px 6px;border-radius:4px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34)">ADMIN</span></sc-if>
+              <span style="font-size:10px;font-weight:800;letter-spacing:.6px;padding:3px 9px;border-radius:6px;color:{{ thread.catColor }};background:{{ thread.catBg }}">{{ thread.cat }}</span>
+            </div>
+            <div style="font-size:12px;color:#6d6d7c;margin-top:2px">{{ thread.ago }}</div>
+          </div>
+        </div>
+        <h1 style="font-size:24px;font-weight:800;margin:18px 0 0;letter-spacing:-.3px">{{ thread.title }}</h1>
+        {{ thread.rich }}
+        <div style="display:flex;align-items:center;gap:16px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05)">
+          <div onClick="{{ thread.upvote }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:{{ thread.upColor }};cursor:pointer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+            {{ thread.up }} upvotes
+          </div>
+          <div style="font-size:13.5px;color:#8a8a98;font-weight:600">{{ thread.replyCount }} replies</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:800;letter-spacing:1.6px;color:#8a8a98;margin:28px 0 14px">REPLIES</div>
+      <sc-if value="{{ isLoggedIn }}">
+        <div style="display:flex;gap:12px;margin-bottom:22px">
+          {{ userAvatarImgMd }}
+          <div style="flex:1">
+            <textarea value="{{ frText }}" onChange="{{ onFrText }}" placeholder="Write a reply..." style="width:100%;min-height:74px;background:#141419;border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:12px 14px;font-size:14.5px;color:#e9e9ef;resize:vertical;outline:none;line-height:1.6" style-focus="border-color:rgba(216,169,78,.5)"></textarea>
+            <div style="display:flex;justify-content:flex-end;margin-top:9px">
+              <button onClick="{{ postForumReply }}" style="background:#d8a94e;color:#171006;border:none;border-radius:9px;padding:9px 22px;font-size:14px;font-weight:700;cursor:pointer;opacity:{{ frOpacity }};transition:all .15s" style-hover="background:#e4b95e">Reply</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ thread.noReplies }}">
+        <div style="color:#6d6d7c;font-size:14px;padding:6px 2px">No replies yet &mdash; be the first.</div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <sc-for list="{{ thread.replies }}" as="r" hint-placeholder-count="0">
+          <div style="display:flex;gap:12px">
+            {{ r.avatarEl }}
+            <div style="min-width:0;flex:1">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span onClick="{{ r.openAuthor }}" style="font-size:14px;font-weight:700;cursor:pointer" style-hover="color:#eecf8f">{{ r.author }}</span>
+                <sc-if value="{{ r.isAdminAuthor }}"><span style="font-size:8.5px;font-weight:800;letter-spacing:1px;padding:1px 6px;border-radius:4px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34)">ADMIN</span></sc-if>
+                <span style="font-size:12px;color:#8a8a98">{{ r.ago }}</span>
+              </div>
+              {{ r.rich }}
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ============ ADMIN ============ -->
   <sc-if value="{{ isAdminView }}">
     <div style="max-width:1080px;margin:0 auto;padding:28px 20px 80px">
@@ -1475,7 +1767,7 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
         </div>
         <div>
           <h1 style="font-size:26px;font-weight:800;margin:0">Admin panel</h1>
-          <div style="font-size:13.5px;color:#8a8a98;margin-top:3px">Manage members and site announcements.</div>
+          <div style="font-size:13.5px;color:#8a8a98;margin-top:3px">Announcements, members, and community reports.</div>
         </div>
       </div>
 
@@ -1488,9 +1780,10 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
         </sc-for>
       </div>
 
-      <div style="display:flex;gap:6px;background:#141419;border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:5px;margin:28px 0 24px;max-width:360px">
+      <div style="display:flex;gap:6px;background:#141419;border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:5px;margin:28px 0 24px;max-width:560px">
         <div onClick="{{ adminTabAnn }}" style="flex:1;text-align:center;padding:9px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:{{ annTabBg }};color:{{ annTabColor }};transition:all .15s">Announcements</div>
         <div onClick="{{ adminTabMembers }}" style="flex:1;text-align:center;padding:9px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:{{ membersTabBg }};color:{{ membersTabColor }};transition:all .15s">Members</div>
+        <div onClick="{{ adminTabReports }}" style="flex:1;text-align:center;padding:9px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:{{ reportsTabBg }};color:{{ reportsTabColor }};transition:all .15s">Reports ({{ reportCount }})</div>
       </div>
 
       <sc-if value="{{ annTabActive }}">
@@ -1536,19 +1829,19 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
             <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.05)">
               {{ u.avatarImg }}
               <div onClick="{{ u.openProfile }}" style="flex:1;min-width:0;cursor:pointer">
-                <div style="display:flex;align-items:center;gap:9px">
+                <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
                   <span style="font-size:15px;font-weight:700">{{ u.name }}</span>
-                  <sc-if value="{{ u.isAdmin }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.35)">ADMIN</span></sc-if>
+                  <sc-if value="{{ u.isAdmin }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#171006;background:linear-gradient(120deg,#ecca7e,#c08f34)">ADMIN</span></sc-if>
+                  <sc-if value="{{ u.isBanned }}"><span style="font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:5px;color:#f87171;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3)">BANNED</span></sc-if>
                 </div>
                 <div style="font-size:13px;color:#8a8a98;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ u.email }} &middot; joined {{ u.joinedLabel }}</div>
               </div>
-              <sc-if value="{{ u.isShoeez }}">
-                <span style="font-size:12px;color:#6d6d7c;flex:0 0 auto">Owner</span>
-              </sc-if>
+              <sc-if value="{{ u.isShoeez }}"><span style="font-size:12px;color:#6d6d7c;flex:0 0 auto">Owner</span></sc-if>
               <sc-if value="{{ u.notShoeez }}">
-                <div style="display:flex;gap:7px;flex:0 0 auto">
-                  <div onClick="{{ u.toggleAdmin }}" style="font-size:12.5px;font-weight:600;color:#eecf8f;background:rgba(216,169,78,.12);border:1px solid rgba(216,169,78,.28);border-radius:8px;padding:7px 12px;cursor:pointer;transition:all .15s" style-hover="background:rgba(216,169,78,.2)">{{ u.adminBtnLabel }}</div>
-                  <div onClick="{{ u.remove }}" title="Remove user" style="width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8a8a98;cursor:pointer;transition:all .15s" style-hover="background:rgba(248,113,113,.12);color:#f87171">
+                <div style="display:flex;gap:7px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end">
+                  <div onClick="{{ u.toggleAdmin }}" style="font-size:12.5px;font-weight:600;color:#eecf8f;background:rgba(216,169,78,.1);border:1px solid rgba(216,169,78,.28);border-radius:8px;padding:7px 12px;cursor:pointer;transition:all .15s" style-hover="background:rgba(216,169,78,.2)">{{ u.adminBtnLabel }}</div>
+                  <div onClick="{{ u.toggleBan }}" style="font-size:12.5px;font-weight:600;color:{{ u.banColor }};background:{{ u.banBg }};border:1px solid {{ u.banBorder }};border-radius:8px;padding:7px 12px;cursor:pointer;transition:filter .15s" style-hover="filter:brightness(1.25)">{{ u.banBtnLabel }}</div>
+                  <div onClick="{{ u.remove }}" title="Remove user" style="width:33px;height:33px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8a8a98;cursor:pointer;transition:all .15s" style-hover="background:rgba(248,113,113,.12);color:#f87171">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                   </div>
                 </div>
@@ -1557,7 +1850,27 @@ h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Instrument Sans', sans-serif; 
           </sc-for>
         </div>
       </sc-if>
+
+      <sc-if value="{{ reportsTabActive }}">
+        <sc-if value="{{ noReports }}"><div style="background:#141419;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:44px 20px;text-align:center;color:#8a8a98;font-size:14px">No open reports. All clear.</div></sc-if>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <sc-for list="{{ adminReports }}" as="r" hint-placeholder-count="0">
+            <div style="display:flex;gap:14px;align-items:flex-start;background:#141419;border:1px solid rgba(255,255,255,.055);border-radius:13px;padding:15px 18px">
+              <span style="flex:0 0 auto;font-size:9.5px;font-weight:800;letter-spacing:.8px;padding:4px 9px;border-radius:6px;color:{{ r.typeColor }};background:{{ r.typeBg }};margin-top:2px">{{ r.typeLabel }}</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14px;color:#e9e9ef;line-height:1.5">{{ r.summary }}</div>
+                <div style="font-size:12px;color:#6d6d7c;margin-top:5px">Reported by {{ r.by }} &middot; {{ r.ago }}</div>
+              </div>
+              <div onClick="{{ r.resolve }}" style="flex:0 0 auto;font-size:12.5px;font-weight:600;color:#4ade80;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);border-radius:8px;padding:7px 12px;cursor:pointer;transition:filter .15s" style-hover="filter:brightness(1.25)">Resolve</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
     </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}">
+    <div style="position:fixed;bottom:26px;left:50%;z-index:200;background:#1c1c24;border:1px solid rgba(216,169,78,.4);color:#e9e9ef;border-radius:11px;padding:12px 22px;font-size:13.5px;font-weight:600;box-shadow:0 12px 40px rgba(0,0,0,.55);animation:vpx-slideup .3s cubic-bezier(.16,1,.3,1);transform:translateX(-50%)">{{ toast }}</div>
   </sc-if>
 
   <!-- ============ MOBILE NAV ============ -->
@@ -1624,11 +1937,13 @@ class Component extends DCLogic {
     cropOpen: false, cropScale: 1, cropX: 0, cropY: 0,
     // browse
     browseView: false, browseGenres: [], browseStatus: '', browseType: 'KR', browseSort: 'POPULARITY_DESC',
-    browseResults: [], browseLoading: false, browseQuery: '', browseTag: '', browseSearch: '',
+    browseResults: [], browseLoading: false, browseQuery: '', browseTag: '', browseSearch: '', browsePage: 1, browseHasMore: false, browseLoadingMore: false,
     // rating
     ratingOpen: false, ratingHover: 0, myRating: 0,
     // header menus + notifications
     notifOpen: false, userMenuOpen: false, notifs: [], notifTab: 'all', showLikeNotifs: true, annOpen: null,
+    cmMenuFor: null, toast: '', commentImgs: [], readerCommentImgs: [], giphyFor: null, giphyQuery: '', giphyResults: [], giphyLoading: false, blocked: [],
+    forum: [], forumCat: 'All', threadOpen: null, ftTitle: '', ftBody: '', ftCat: 'General', frText: '', forumComposerOpen: false,
     // settings
     setName: '', setEmail: '', setBio: '', setCurPass: '', setNewPass: '', setConfirmPass: '',
     setMsg: '', setErr: '', settingsTab: 'account', deleteConfirming: false, deleteText: '',
@@ -1640,8 +1955,11 @@ class Component extends DCLogic {
     bookmarks: [], bookmarksLoading: false,
     // login
     loginMode: 'signin', loginName: '', loginEmail: '', loginPass: '', loginConfirm: '', loginError: '', loginOk: '', loggingIn: false, showPass: false,
-    users: [], profileUser: null, profileTab: 'overview', avatarPicking: false,
+    users: [], profileUser: null, profileTab: 'overview', avatarPicking: false, favPicking: false,
   };
+
+  // Built-in chapter library (R2 bucket) - loaded for every visitor automatically
+  LIBRARY_URL = 'https://pub-6322e33a60874a0193f5053c14e83bf8.r2.dev';
 
   API = 'https://api.mangadex.org';
   // AniList (GraphQL) supplies all browsing metadata + covers. Its CDN serves
@@ -1681,13 +1999,16 @@ class Component extends DCLogic {
       if (f) this.setState({ follows: JSON.parse(f) });
       const ln = localStorage.getItem('vpx-likenotifs');
       if (ln !== null) this.setState({ showLikeNotifs: ln === '1' });
+      const bl = localStorage.getItem('vpx-blocked');
+      if (bl) this.setState({ blocked: JSON.parse(bl) });
       const lu = localStorage.getItem('vpx-library-url');
-      const libUrl = (lu !== null && lu !== '') ? lu : (this.props.librarySource || '');
+      const libUrl = (lu !== null && lu !== '') ? lu : (this.props.librarySource || this.LIBRARY_URL || '');
       if (libUrl) { this.setState({ libUrl }); this.loadLibrary(libUrl); }
     } catch (e) {}
     this.setState({ users });
     this.loadHome();
     this.loadAnnouncements();
+    this.loadForum();
     try {
       const r = JSON.parse(localStorage.getItem('vpx-route') || 'null');
       if (r && r.seriesId && /^\d+$/.test(String(r.seriesId)) && (r.view === 'series' || r.view === 'reader')) {
@@ -1721,10 +2042,312 @@ class Component extends DCLogic {
   ]; }
 
   avatarFor(name) { return 'https://api.dicebear.com/9.x/thumbs/svg?seed=' + encodeURIComponent(name || 'guest'); }
+  starIcon(fillPct) {
+    const star = (color) => React.createElement('svg', { width: 26, height: 26, viewBox: '0 0 24 24', fill: color, stroke: color, strokeWidth: 1, style: { display: 'block' } }, React.createElement('polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' }));
+    return React.createElement('div', { style: { position: 'absolute', inset: 0 } },
+      star('#3a3a44'),
+      React.createElement('div', { style: { position: 'absolute', inset: 0, width: (fillPct * 100) + '%', overflow: 'hidden' } }, star('#facc15')));
+  }
+
   avImg(src, size, opts) {
     opts = opts || {};
     if (!src) return null;
     return React.createElement('img', { src: src, alt: '', onClick: opts.onClick, style: { width: size + 'px', height: size + 'px', borderRadius: opts.radius || '50%', objectFit: 'cover', flex: '0 0 auto', background: '#22222b', display: 'block', border: opts.border, cursor: opts.onClick ? 'pointer' : undefined } });
+  }
+
+  // ---------- rich comments ----------
+  parseRich(str) {
+    const out = []; let k = 0;
+    const re = /(\|\|[^|]+\|\||\*\*[^*]+\*\*|\*[^*\n]+\*|~~[^~]+~~)/g;
+    let last = 0, m;
+    while ((m = re.exec(str))) {
+      if (m.index > last) out.push(str.slice(last, m.index));
+      const t = m[0];
+      if (t.indexOf('||') === 0) out.push(React.createElement('span', { key: k++, title: 'Spoiler \u2014 click to reveal', onClick: (e) => { e.stopPropagation(); const el = e.currentTarget; el.style.color = 'inherit'; el.style.background = 'rgba(255,255,255,.07)'; el.style.cursor = 'auto'; }, style: { background: '#2e2e3a', color: 'transparent', borderRadius: '5px', padding: '0 5px', cursor: 'pointer', transition: 'all .3s', userSelect: 'none' } }, t.slice(2, -2)));
+      else if (t.indexOf('**') === 0) out.push(React.createElement('strong', { key: k++ }, t.slice(2, -2)));
+      else if (t.indexOf('~~') === 0) out.push(React.createElement('s', { key: k++ }, t.slice(2, -2)));
+      else out.push(React.createElement('em', { key: k++ }, t.slice(1, -1)));
+      last = m.index + t.length;
+    }
+    if (last < str.length) out.push(str.slice(last));
+    return out;
+  }
+
+  richText(text, imgs, fontSize) {
+    const kids = [];
+    if (text) kids.push(React.createElement('div', { key: 't', style: { fontSize: fontSize + 'px', color: '#c9c9d4', lineHeight: 1.65, marginTop: '5px', whiteSpace: 'pre-wrap', overflowWrap: 'break-word' } }, this.parseRich(text)));
+    if (imgs && imgs.length) kids.push(React.createElement('div', { key: 'i', style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '9px' } }, imgs.map((u, i) => React.createElement('img', { key: i, src: u, style: { maxHeight: '200px', maxWidth: '260px', borderRadius: '10px', display: 'block' } }))));
+    return React.createElement('div', null, kids);
+  }
+
+  wrapSel(which, before, after) {
+    const el = which === 'series' ? this._cmBox : this._rdBox;
+    const key = which === 'series' ? 'commentText' : 'readerCommentText';
+    const cur = this.state[key] || '';
+    let s0 = cur.length, s1 = cur.length;
+    if (el && typeof el.selectionStart === 'number') { s0 = el.selectionStart; s1 = el.selectionEnd; }
+    const next = cur.slice(0, s0) + before + cur.slice(s0, s1) + after + cur.slice(s1);
+    this.setState({ [key]: next }, () => { if (el) { el.focus(); try { el.setSelectionRange(s0 + before.length, s1 + before.length); } catch (e) {} } });
+  }
+
+  imgRow(which) {
+    const imgs = which === 'series' ? this.state.commentImgs : this.state.readerCommentImgs;
+    if (!imgs || !imgs.length) return null;
+    return React.createElement('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap', padding: '2px 12px 10px' } }, imgs.map((u, i) =>
+      React.createElement('div', { key: i, style: { position: 'relative' } },
+        React.createElement('img', { src: u, style: { height: '72px', borderRadius: '8px', display: 'block' } }),
+        React.createElement('div', { onClick: () => this.removeImg(which, i), title: 'Remove', style: { position: 'absolute', top: '-7px', right: '-7px', width: '20px', height: '20px', borderRadius: '50%', background: '#101014', border: '1px solid rgba(255,255,255,.25)', color: '#fff', fontSize: '12px', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' } }, '\u00d7'))));
+  }
+
+  addImg(which, url) {
+    const key = which === 'series' ? 'commentImgs' : 'readerCommentImgs';
+    this.setState(s => (s[key].length >= 3 ? {} : { [key]: [...s[key], url] }));
+  }
+  removeImg(which, i) {
+    const key = which === 'series' ? 'commentImgs' : 'readerCommentImgs';
+    this.setState(s => ({ [key]: s[key].filter((x, j) => j !== i) }));
+  }
+  onImgFile(which, e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.size > 3 * 1024 * 1024) { this.showToast('Image too large (max 3 MB).'); e.target.value = ''; return; }
+    const r = new FileReader();
+    r.onload = (ev) => this.addImg(which, ev.target.result);
+    r.readAsDataURL(f);
+    e.target.value = '';
+  }
+
+  // ---------- GIPHY ----------
+  openGiphy(which) {
+    if (!this.state.user) return this.setState({ view: 'login' });
+    const opening = this.state.giphyFor !== which;
+    this.setState({ giphyFor: opening ? which : null, giphyQuery: '', giphyResults: [] });
+    if (opening) this.searchGiphy('');
+  }
+  onGiphyQuery(q) { this.setState({ giphyQuery: q }); clearTimeout(this._gifT); this._gifT = setTimeout(() => this.searchGiphy(q), 450); }
+  async searchGiphy(q) {
+    this.setState({ giphyLoading: true });
+    try {
+      const url = 'https://api.giphy.com/v1/gifs/' + ((q || '').trim() ? 'search?q=' + encodeURIComponent(q) + '&' : 'trending?') + 'api_key=dc6zaTOxFJmzC&limit=18&rating=pg-13';
+      const r = await fetch(url);
+      const j = await r.json();
+      this.setState({ giphyResults: (j.data || []).map(g => ({ preview: (g.images.fixed_width_small || g.images.fixed_width).url, full: g.images.fixed_width.url })), giphyLoading: false });
+    } catch (e) { this.setState({ giphyResults: [], giphyLoading: false }); }
+  }
+  pickGif(which, url) { this.addImg(which, url); this.setState({ giphyFor: null }); }
+  giphyPanel(which) {
+    const s = this.state;
+    if (s.giphyFor !== which) return null;
+    return React.createElement('div', { style: { marginTop: '10px', background: '#141419', border: '1px solid rgba(255,255,255,.08)', borderRadius: '12px', padding: '12px' } },
+      React.createElement('div', { style: { display: 'flex', gap: '8px', marginBottom: '10px' } },
+        React.createElement('input', { value: s.giphyQuery, placeholder: 'Search GIPHY...', onChange: (e) => this.onGiphyQuery(e.target.value), style: { flex: 1, background: '#17171d', border: '1px solid rgba(255,255,255,.08)', borderRadius: '8px', padding: '9px 12px', fontSize: '13.5px', color: '#e9e9ef', outline: 'none' } }),
+        React.createElement('div', { onClick: () => this.setState({ giphyFor: null }), style: { display: 'flex', alignItems: 'center', padding: '0 10px', color: '#8a8a98', cursor: 'pointer', fontSize: '13px', fontWeight: 600 } }, 'Close')),
+      s.giphyLoading
+        ? React.createElement('div', { style: { padding: '14px', color: '#8a8a98', fontSize: '13px' } }, 'Searching...')
+        : React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))', gap: '6px', maxHeight: '240px', overflowY: 'auto' } },
+            (s.giphyResults || []).map((g, i) => React.createElement('img', { key: i, src: g.preview, onClick: () => this.pickGif(which, g.full), style: { width: '100%', height: '96px', objectFit: 'cover', borderRadius: '7px', cursor: 'pointer', background: '#1c1c24' } }))),
+      React.createElement('div', { style: { marginTop: '8px', fontSize: '10.5px', color: '#6d6d7c', textAlign: 'right' } }, 'Powered by GIPHY'));
+  }
+
+  // ---------- moderation ----------
+  showToast(msg) { clearTimeout(this._toastT); this.setState({ toast: msg }); this._toastT = setTimeout(() => this.setState({ toast: '' }), 2600); }
+  blockUser(name) {
+    const me = this.state.user;
+    if (!me || me.name === name) return;
+    this.setState(s => {
+      const blocked = [...new Set([...s.blocked, name])];
+      try { localStorage.setItem('vpx-blocked', JSON.stringify(blocked)); } catch (e) {}
+      return { blocked, cmMenuFor: null };
+    });
+    this.showToast(name + ' blocked \u2014 their comments are now hidden.');
+  }
+  unblockUser(name) {
+    this.setState(s => {
+      const blocked = s.blocked.filter(n => n !== name);
+      try { localStorage.setItem('vpx-blocked', JSON.stringify(blocked)); } catch (e) {}
+      return { blocked };
+    });
+  }
+  reportItem(type, info) {
+    if (!this.state.user) return this.setState({ view: 'login' });
+    try {
+      const reports = JSON.parse(localStorage.getItem('vpx-reports') || '[]');
+      reports.unshift({ type, info, by: this.state.user.name, t: Date.now() });
+      localStorage.setItem('vpx-reports', JSON.stringify(reports.slice(0, 200)));
+    } catch (e) {}
+    this.setState({ cmMenuFor: null });
+    this.showToast('Report submitted \u2014 a moderator will review it.');
+  }
+  bannerEl(banner) {
+    if (banner) return React.createElement('img', { src: banner, alt: '', style: { width: '100%', height: '190px', objectFit: 'cover', display: 'block' } });
+    return React.createElement('div', { style: { width: '100%', height: '190px', background: 'linear-gradient(115deg,#191307 0%,#241b0c 34%,#171017 72%,#12121a 100%)' } });
+  }
+  updateMe(patch) {
+    const u = this.state.user; if (!u) return;
+    const users = this.state.users.map(x => x.name === u.name ? { ...x, ...patch } : x);
+    const nu = { ...u, ...patch };
+    try { localStorage.setItem('vpx-user', JSON.stringify(nu)); } catch (e) {}
+    this.persistUsers(users);
+    this.setState({ user: nu });
+  }
+  onBannerFile(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.size > 4 * 1024 * 1024) { this.showToast('Banner too large (max 4 MB).'); e.target.value = ''; return; }
+    const r = new FileReader();
+    r.onload = (ev) => { this.updateMe({ banner: ev.target.result }); this.showToast('Banner updated.'); };
+    r.readAsDataURL(f);
+    e.target.value = '';
+  }
+  toggleFav(m) {
+    const u = this.state.user; if (!u) return;
+    const favs = (u.favs || []).slice();
+    const i = favs.findIndex(f => String(f.id) === String(m.id));
+    if (i >= 0) favs.splice(i, 1);
+    else { if (favs.length >= 6) return this.showToast('You can pick up to 6 favourites.'); favs.push({ id: m.id, title: m.title, cover: m.cover }); }
+    this.updateMe({ favs });
+  }
+  togglePriv(key) {
+    const u = this.state.user; if (!u) return;
+    const p = { ...(u.privacy || {}) };
+    p[key] = p[key] === false ? true : false;
+    this.updateMe({ privacy: p });
+  }
+  getHistory(name) {
+    try { return JSON.parse(localStorage.getItem('vpx-history-' + name) || '[]'); } catch (e) { return []; }
+  }
+  recordHistory(ch) {
+    const u = this.state.user, sr = this.state.series;
+    if (!u || !sr) return;
+    try {
+      const key = 'vpx-history-' + u.name;
+      let h = JSON.parse(localStorage.getItem(key) || '[]');
+      h = h.filter(x => !(String(x.sid) === String(sr.id) && x.label === ch.label));
+      h.unshift({ sid: sr.id, title: sr.title, cover: sr.coverSmall || sr.cover || '', label: ch.label, t: Date.now() });
+      localStorage.setItem(key, JSON.stringify(h.slice(0, 40)));
+    } catch (e) {}
+  }
+  clearHistory() {
+    const u = this.state.user; if (!u) return;
+    try { localStorage.removeItem('vpx-history-' + u.name); } catch (e) {}
+    this.forceUpdate();
+    this.showToast('Reading history cleared.');
+  }
+  openActivity(a) {
+    if (!a || !a.sid) return;
+    const sidS = String(a.sid);
+    if (/^\d+$/.test(sidS)) return this.openSeries(sidS);
+    const ls = (this.state.libSeries || []).find(x => x.id === sidS);
+    if (ls) this.openLibSeries(ls);
+  }
+  achievementsFor(pu, stats, hist) {
+    const joinedDays = (Date.now() - new Date(pu.joined).getTime()) / 86400e3;
+    let ratings = 0;
+    try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.indexOf('vpx-rating-') === 0) ratings++; } } catch (e) {}
+    const ch = hist.length;
+    const own = !!(this.state.user && this.state.user.name === pu.name);
+    return [
+      { e: '\uD83D\uDC63', n: 'First Steps', d: 'Read your first chapter', ok: ch >= 1 },
+      { e: '\uD83D\uDCDA', n: 'Bookworm', d: 'Read 25 chapters', ok: ch >= 25 },
+      { e: '\uD83C\uDF19', n: 'Night Owl', d: 'Read 100 chapters', ok: ch >= 100 },
+      { e: '\u270D\uFE0F', n: 'First Words', d: 'Post a comment', ok: stats.comments >= 1 },
+      { e: '\uD83D\uDCAC', n: 'Chatterbox', d: 'Post 10 comments', ok: stats.comments >= 10 },
+      { e: '\u2B50', n: 'Critic', d: 'Rate 3 series', ok: own && ratings >= 3 },
+      { e: '\uD83D\uDD16', n: 'Collector', d: 'Bookmark 10 series', ok: own && (this.state.follows || []).length >= 10 },
+      { e: '\uD83C\uDFC6', n: 'Veteran', d: 'Member for a year', ok: joinedDays >= 365 },
+      { e: '\u2726', n: 'Staff', d: 'Vampics team member', ok: !!pu.isAdmin },
+    ];
+  }
+
+  forumCatStyle(cat) {
+    return ({ 'General': ['#eecf8f', 'rgba(216,169,78,.13)'], 'Series Talk': ['#93c5fd', 'rgba(96,165,250,.13)'], 'Suggestions': ['#86efac', 'rgba(74,222,128,.13)'], 'Off-topic': ['#f0a08c', 'rgba(224,86,60,.13)'] })[cat] || ['#9b9ba9', '#1c1c24'];
+  }
+  userAvatarOf(name) {
+    const u = (this.state.users || []).find(x => x.name.toLowerCase() === (name || '').toLowerCase());
+    return (u && u.avatar) || this.avatarFor(name);
+  }
+  mapThread(t, full) {
+    const me = this.state.user ? this.state.user.name : '';
+    const cs = this.forumCatStyle(t.cat);
+    const findU = (n) => (this.state.users || []).find(x => x.name === n) || {};
+    const base = {
+      id: t.id, title: t.title, cat: t.cat, catColor: cs[0], catBg: cs[1],
+      author: t.author, ago: this.ago(new Date(t.t).toISOString()),
+      avatarEl: this.avImg(this.userAvatarOf(t.author), 40, { onClick: () => this.openProfile(t.author) }),
+      isAdminAuthor: !!findU(t.author).isAdmin,
+      up: t.up || 0, replyCount: (t.replies || []).length,
+      upColor: (t.upBy || []).includes(me) ? '#d8a94e' : '#8a8a98',
+      upvote: (e) => { if (e) e.stopPropagation(); this.upThread(t.id); },
+      open: () => this.openThread(t.id),
+      openAuthor: (e) => { if (e) e.stopPropagation(); this.openProfile(t.author); },
+    };
+    if (full) {
+      base.rich = this.richText(t.body, t.imgs, 15);
+      base.replies = (t.replies || []).map(r => ({ ...r, ago: this.ago(new Date(r.t).toISOString()), avatarEl: this.avImg(this.userAvatarOf(r.author), 34, { onClick: () => this.openProfile(r.author) }), rich: this.richText(r.text, null, 14.5), isAdminAuthor: !!findU(r.author).isAdmin, openAuthor: () => this.openProfile(r.author) }));
+      base.noReplies = (t.replies || []).length === 0;
+    }
+    return base;
+  }
+  loadForum() {
+    let f = null;
+    try { f = JSON.parse(localStorage.getItem('vpx-forum') || 'null'); } catch (e) {}
+    if (!f) {
+      f = [{ id: 't1', title: 'Welcome to the Vampics forums!', body: 'This is the place to talk manhwa \u2014 share recommendations, discuss chapters (mark your ||spoilers||!), suggest features, or just hang out.\n\nKeep it friendly and enjoy.', cat: 'General', author: 'Shoeez', t: Date.now() - 3 * 86400e3, up: 12, upBy: [], replies: [] }];
+      try { localStorage.setItem('vpx-forum', JSON.stringify(f)); } catch (e) {}
+    }
+    this.setState({ forum: f });
+  }
+  saveForum(f) { try { localStorage.setItem('vpx-forum', JSON.stringify(f)); } catch (e) {} this.setState({ forum: f }); }
+  goForums() { window.scrollTo(0, 0); this.saveRoute({ view: 'home' }); this.setState({ view: 'forums', searchOpen: false, notifOpen: false, userMenuOpen: false }); }
+  openThread(id) { window.scrollTo(0, 0); this.setState({ view: 'thread', threadOpen: id, frText: '' }); }
+  postThread() {
+    const u = this.state.user; if (!u) return this.setState({ view: 'login' });
+    const title = this.state.ftTitle.trim(), body = this.state.ftBody.trim();
+    if (!title || !body) return;
+    const t = { id: 't' + Date.now(), title, body, cat: this.state.ftCat, author: u.name, t: Date.now(), up: 0, upBy: [], replies: [] };
+    this.saveForum([t, ...this.state.forum]);
+    this.setState({ ftTitle: '', ftBody: '', forumComposerOpen: false });
+    this.openThread(t.id);
+  }
+  postForumReply() {
+    const u = this.state.user; if (!u) return this.setState({ view: 'login' });
+    const text = (this.state.frText || '').trim(); if (!text) return;
+    const f = this.state.forum.map(t => t.id === this.state.threadOpen ? { ...t, replies: [...(t.replies || []), { id: 'r' + Date.now(), author: u.name, text, t: Date.now() }] } : t);
+    this.saveForum(f);
+    this.setState({ frText: '' });
+  }
+  upThread(id) {
+    const u = this.state.user; if (!u) return this.setState({ view: 'login' });
+    const f = this.state.forum.map(t => {
+      if (t.id !== id) return t;
+      const upBy = t.upBy || [];
+      const has = upBy.includes(u.name);
+      return { ...t, upBy: has ? upBy.filter(n => n !== u.name) : [...upBy, u.name], up: (t.up || 0) + (has ? -1 : 1) };
+    });
+    this.saveForum(f);
+  }
+  getReports() { try { return JSON.parse(localStorage.getItem('vpx-reports') || '[]'); } catch (e) { return []; } }
+  reportSummary(r) {
+    const i = r.info || {};
+    if (r.type === 'chapter') return (i.series || 'Unknown series') + ' \u2014 ' + (i.chapter || 'chapter') + ' has a problem';
+    return (i.name || '?') + ': \u201C' + (i.text || '') + '\u201D in ' + (i.where || 'a series');
+  }
+  resolveReport(t) {
+    try { const rs = this.getReports().filter(r => r.t !== t); localStorage.setItem('vpx-reports', JSON.stringify(rs)); } catch (e) {}
+    this.forceUpdate();
+    this.showToast('Report resolved.');
+  }
+  adminToggleBan(name) {
+    if ((name || '').toLowerCase() === 'shoeez') return;
+    const users = this.state.users.map(u => u.name === name ? { ...u, banned: !u.banned } : u);
+    this.persistUsers(users);
+    const target = users.find(u => u.name === name);
+    this.showToast(target && target.banned ? name + ' has been banned.' : name + ' has been unbanned.');
+  }
+
+  reportChapter() {
+    const r = this.state.reader, sr = this.state.series;
+    this.reportItem('chapter', { series: sr && sr.title, chapter: r && r.label, id: r && r.id });
   }
   userAvatarUrl() { const u = this.state.user; return u ? (u.avatar || this.avatarFor(u.name)) : ''; }
   isAdminName(name) { return (name || '').toLowerCase() === 'shoeez'; }
@@ -1740,7 +2363,7 @@ class Component extends DCLogic {
     }
     try { me = localStorage.getItem('vpx-reactme-' + chId) || null; } catch (e) {}
     try { comments = JSON.parse(localStorage.getItem('vpx-cc-' + chId) || '[]'); } catch (e) { comments = []; }
-    this.setState({ chReact: react, chReactMe: me, chapterComments: comments, reactAnimKey: null, readerCommentText: '', replyingTo: null, replyText: '' });
+    this.setState({ chReact: react, chReactMe: me, chapterComments: comments, reactAnimKey: null, readerCommentText: '', replyingTo: null, replyText: '', readerCommentImgs: [], giphyFor: null, cmMenuFor: null });
   }
 
   reactChapter(key) {
@@ -1761,10 +2384,11 @@ class Component extends DCLogic {
 
   addReaderComment() {
     const text = (this.state.readerCommentText || '').trim();
+    const imgs = this.state.readerCommentImgs || [];
     const u = this.state.user, chId = this.state.reader && this.state.reader.id;
-    if (!text || !u || !chId) return;
-    const c = { id: 'c' + Date.now(), name: u.name, avatar: this.userAvatarUrl(), text, t: Date.now(), likes: 0, likedBy: [], replies: [] };
-    this.setState(s => { const comments = [c, ...s.chapterComments]; this.saveChapterComments(chId, comments); return { chapterComments: comments, readerCommentText: '' }; });
+    if ((!text && !imgs.length) || !u || !chId) return;
+    const c = { id: 'c' + Date.now(), name: u.name, avatar: this.userAvatarUrl(), text, imgs, t: Date.now(), likes: 0, likedBy: [], replies: [], sid: (this.state.series || {}).id, series: (this.state.series || {}).title };
+    this.setState(s => { const comments = [c, ...s.chapterComments]; this.saveChapterComments(chId, comments); return { chapterComments: comments, readerCommentText: '', readerCommentImgs: [], giphyFor: null }; });
   }
 
   likeReaderComment(id) {
@@ -2127,6 +2751,7 @@ class Component extends DCLogic {
     const ch = this.state.chapters[idx];
     if (!ch) return;
     this._readToken = (this._readToken || 0) + 1;
+    this.recordHistory(ch);
     if (ch.local) return this.openLocalChapter(idx, ch);
     window.scrollTo(0, 0);
     this.setState({ view: 'reader', reader: { ...ch, idx }, readerLoading: true, pages: [], chapterMenuOpen: false, chromeVisible: true });
@@ -2199,7 +2824,7 @@ class Component extends DCLogic {
       upFill: (o.upBy || []).includes(meName) ? 'currentColor' : 'none',
       downFill: (o.downBy || []).includes(meName) ? 'currentColor' : 'none',
     });
-    let sortedComments = s.comments.slice();
+    let sortedComments = s.comments.filter(c => !(s.blocked || []).includes(c.name));
     if (s.commentSort === 'newest') sortedComments.sort((a, b) => b.t - a.t);
     else if (s.commentSort === 'oldest') sortedComments.sort((a, b) => a.t - b.t);
     else sortedComments.sort((a, b) => ((b.up || 0) - (b.down || 0)) - ((a.up || 0) - (a.down || 0)) || b.t - a.t);
@@ -2212,6 +2837,12 @@ class Component extends DCLogic {
       initialShown: c.avatar ? '' : (c.name || '?')[0].toUpperCase(),
       isAdmin: this.isAdminName(c.name),
       openProfile: () => this.openProfile(c.name),
+      rich: this.richText(c.text, c.imgs, 15),
+      menuOpen: s.cmMenuFor === c.id,
+      toggleMenu: () => this.setState(p => ({ cmMenuFor: p.cmMenuFor === c.id ? null : c.id })),
+      report: () => this.reportItem('comment', { name: c.name, text: (c.text || '').slice(0, 140), where: series.title }),
+      block: () => this.blockUser(c.name),
+      canBlock: !!(s.user && s.user.name !== c.name),
       bg: commentPalette[i % commentPalette.length][0],
       fg: commentPalette[i % commentPalette.length][1],
       upvote: () => this.voteComment(c.id, null, 'up'),
@@ -2230,6 +2861,7 @@ class Component extends DCLogic {
         initialShown: r.avatar ? '' : (r.name || '?')[0].toUpperCase(),
         isAdmin: this.isAdminName(r.name),
         openProfile: () => this.openProfile(r.name),
+        rich: this.richText(r.text, r.imgs, 14),
         bg: commentPalette[(i + j + 1) % commentPalette.length][0],
         fg: commentPalette[(i + j + 1) % commentPalette.length][1],
         upvote: () => this.voteComment(c.id, r.id, 'up'),
@@ -2246,7 +2878,7 @@ class Component extends DCLogic {
     // profile + admin computed data
     const fmtDate = (iso) => { try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); } catch (e) { return ''; } };
     const adminList = (s.users || []).slice().sort((a, b) => new Date(b.joined) - new Date(a.joined)).map(u => ({
-      name: u.name, email: u.email, avatar: u.avatar || this.avatarFor(u.name), isAdmin: !!u.isAdmin,
+      name: u.name, email: u.email, avatar: u.avatar || this.avatarFor(u.name), isAdmin: !!u.isAdmin, banned: !!u.banned,
       avatarImg: this.avImg(u.avatar || this.avatarFor(u.name), 42, { onClick: () => this.openProfile(u.name) }),
       joinedLabel: fmtDate(u.joined), openProfile: () => this.openProfile(u.name),
     }));
@@ -2258,14 +2890,19 @@ class Component extends DCLogic {
         const isMe = !!(user && user.name.toLowerCase() === pu.name.toLowerCase());
         const st = this.userStats(pu.name);
         const acts = this.userActivity(pu.name);
+        const priv = pu.privacy || {};
+        const hist = this.getHistory(pu.name);
         profileData = {
           name: pu.name, avatar: pu.avatar || this.avatarFor(pu.name), isAdmin: !!pu.isAdmin, isMe,
-          bio: pu.bio || '', joinedLabel: fmtDate(pu.joined),
+          bio: pu.bio || '', joinedLabel: fmtDate(pu.joined), banner: pu.banner || '',
+          favs: pu.favs || [], hist,
+          privHistory: priv.history !== false, privFavs: priv.favs !== false, privComments: priv.comments !== false,
           activity: acts,
+          ach: this.achievementsFor(pu, st, hist),
           stats: [
-            { value: isMe ? String((s.follows || []).length) : String(st.following), label: 'Following' },
+            { value: String(hist.length), label: 'Chapters read' },
             { value: String(st.comments), label: 'Comments' },
-            { value: String(st.reactions), label: 'Reactions' },
+            { value: isMe ? String((s.follows || []).length) : String(st.following), label: 'Following' },
             { value: pu.isAdmin ? 'Admin' : 'Member', label: 'Role' },
           ],
         };
@@ -2291,11 +2928,15 @@ class Component extends DCLogic {
       isNotifsPage: s.view === 'notifications',
       isAnnList: s.view === 'announcements',
       isAnnDetail: s.view === 'announcement',
-      showHeader: s.view === 'home' || s.view === 'series' || s.view === 'bookmarks' || s.view === 'profile' || s.view === 'admin' || s.view === 'browse' || s.view === 'settings' || s.view === 'notifications' || s.view === 'announcements' || s.view === 'announcement',
-      showFooter: (s.view === 'home' && !s.loadingHome) || (s.view === 'series' && !s.seriesLoading) || s.view === 'bookmarks' || s.view === 'profile' || s.view === 'admin' || s.view === 'browse' || s.view === 'settings' || s.view === 'notifications' || s.view === 'announcements' || s.view === 'announcement',
+      isForums: s.view === 'forums',
+      isThread: s.view === 'thread',
+      showHeader: s.view === 'home' || s.view === 'series' || s.view === 'bookmarks' || s.view === 'profile' || s.view === 'admin' || s.view === 'browse' || s.view === 'settings' || s.view === 'notifications' || s.view === 'announcements' || s.view === 'announcement' || s.view === 'forums' || s.view === 'thread',
+      showFooter: (s.view === 'home' && !s.loadingHome) || (s.view === 'series' && !s.seriesLoading) || s.view === 'bookmarks' || s.view === 'profile' || s.view === 'admin' || s.view === 'browse' || s.view === 'settings' || s.view === 'notifications' || s.view === 'announcements' || s.view === 'announcement' || s.view === 'forums' || s.view === 'thread',
       navHomeColor: s.view === 'home' ? '#f2f2f7' : '#8a8a98',
       navBrowseColor: s.view === 'browse' ? '#f2f2f7' : '#8a8a98',
       navBookmarksColor: s.view === 'bookmarks' ? '#f2f2f7' : '#8a8a98',
+      navForumsColor: (s.view === 'forums' || s.view === 'thread') ? '#f2f2f7' : '#8a8a98',
+      goForums: () => this.goForums(),
       goBrowse: () => this.openBrowse(''),
       goBookmarks: () => this.openBookmarks(),
       bookmarks: s.bookmarks,
@@ -2430,19 +3071,20 @@ class Component extends DCLogic {
       authorChips: (series.authors || []).map(a => ({ name: a, open: () => this.openBrowseSearch(a) })),
 
       // rating
-      ratingOpen: s.ratingOpen,
       myRating: s.myRating,
-      myRatingLabel: s.myRating ? s.myRating + '/5' : 'Rate',
-      openRating: () => { if (!s.user) return this.setState({ view: 'login' }); this.setState({ ratingOpen: true, ratingHover: s.myRating }); },
-      closeRating: () => this.setState({ ratingOpen: false, ratingHover: 0 }),
-      ratingStars: [1, 2, 3, 4, 5].map(n => ({
-        n,
-        filled: n <= (s.ratingHover || s.myRating),
-        color: n <= (s.ratingHover || s.myRating) ? '#facc15' : '#3a3a44',
-        hover: () => this.setState({ ratingHover: n }),
-        leave: () => this.setState({ ratingHover: 0 }),
-        pick: () => this.saveMyRating(n),
-      })),
+      myRatingTitle: s.myRating ? ('YOUR RATING \u2014 ' + s.myRating + ' / 5') : 'RATE THIS SERIES',
+      starLeave: () => this.setState({ ratingHover: 0 }),
+      ratingStarsInline: [1, 2, 3, 4, 5].map(n => {
+        const disp = s.ratingHover || s.myRating || 0;
+        const fill = Math.max(0, Math.min(1, disp - (n - 1)));
+        return {
+          n, icon: this.starIcon(fill),
+          hoverHalf: () => this.setState({ ratingHover: n - 0.5 }),
+          hoverFull: () => this.setState({ ratingHover: n }),
+          pickHalf: () => this.saveMyRating(n - 0.5),
+          pickFull: () => this.saveMyRating(n),
+        };
+      }),
 
       // settings
       settingsTab: s.settingsTab,
@@ -2480,6 +3122,10 @@ class Component extends DCLogic {
       deleteOpacity: s.deleteText.trim().toUpperCase() === 'DELETE' ? '1' : '.45',
       browseResults: browseResults,
       browseResultCount: browseResults.length,
+      browseHasMore: s.browseHasMore && !s.browseLoading,
+      browseLoadingMore: s.browseLoadingMore,
+      loadMoreBrowse: () => { if (!this.state.browseLoadingMore) this.loadBrowse(this.state.browsePage + 1); },
+      loadMoreLabel: s.browseLoadingMore ? 'Loading...' : 'Load more',
       browseEmpty: !s.browseLoading && browseResults.length === 0,
       browseGenre: s.browseGenre,
       browseQuery: s.browseQuery,
@@ -2489,13 +3135,13 @@ class Component extends DCLogic {
       browseHeading: s.browseSearch ? ('results for ' + s.browseSearch) : (s.browseTag ? (s.browseTag + ' manhwa') : ((s.browseGenres || []).length ? s.browseGenres.join(' + ') + ' manhwa' : 'all manhwa')),
       genreOptions: this.GENRES.map(g => ({ name: g, active: (s.browseGenres || []).includes(g), pick: () => this.toggleGenre(g) })).map(o => ({
           ...o,
-          chipBg: o.active ? 'rgba(216,169,78,.2)' : '#1b1b22',
-          chipBorder: o.active ? 'rgba(216,169,78,.5)' : 'rgba(255,255,255,.06)',
-          chipColor: o.active ? '#eecf8f' : '#c9c9d4',
+          chipBg: o.active ? '#d8a94e' : '#1b1b22',
+          chipBorder: o.active ? 'transparent' : 'rgba(255,255,255,.06)',
+          chipColor: o.active ? '#171006' : '#c9c9d4',
         })),
-      typeOptions: [['KR', 'Manhwa'], ['CN', 'Manhua'], ['JP', 'Manga']].map(([v, label]) => ({ label, active: s.browseType === v, pick: () => this.setBrowse({ browseType: v }) })).map(o => ({ ...o, chipBg: o.active ? 'rgba(216,169,78,.2)' : '#17171d', chipBorder: o.active ? 'rgba(216,169,78,.5)' : 'rgba(255,255,255,.07)', chipColor: o.active ? '#eecf8f' : '#9b9ba9' })),
-      statusOptions: [['', 'Any status', '#8a8a98'], ['RELEASING', 'Ongoing', '#4ade80'], ['FINISHED', 'Completed', '#60a5fa'], ['HIATUS', 'Hiatus', '#facc15']].map(([v, label, dot]) => ({ label, dot, active: s.browseStatus === v, pick: () => this.setBrowse({ browseStatus: v }) })).map(o => ({ ...o, chipBg: o.active ? 'rgba(216,169,78,.2)' : '#17171d', chipBorder: o.active ? 'rgba(216,169,78,.5)' : 'rgba(255,255,255,.07)', chipColor: o.active ? '#eecf8f' : '#9b9ba9' })),
-      sortOptions: [['POPULARITY_DESC', 'Popular'], ['TRENDING_DESC', 'Trending'], ['SCORE_DESC', 'Top rated'], ['START_DATE_DESC', 'Newest']].map(([v, label]) => ({ label, active: s.browseSort === v, pick: () => this.setBrowse({ browseSort: v }) })).map(o => ({ ...o, chipBg: o.active ? 'rgba(216,169,78,.2)' : '#17171d', chipBorder: o.active ? 'rgba(216,169,78,.5)' : 'rgba(255,255,255,.07)', chipColor: o.active ? '#eecf8f' : '#9b9ba9' })),
+      typeOptions: [['KR', 'Manhwa'], ['CN', 'Manhua'], ['JP', 'Manga']].map(([v, label]) => ({ label, active: s.browseType === v, pick: () => this.setBrowse({ browseType: v }) })).map(o => ({ ...o, chipBg: o.active ? '#d8a94e' : '#17171d', chipBorder: o.active ? 'transparent' : 'rgba(255,255,255,.07)', chipColor: o.active ? '#171006' : '#9b9ba9' })),
+      statusOptions: [['', 'Any status', '#8a8a98'], ['RELEASING', 'Ongoing', '#4ade80'], ['FINISHED', 'Completed', '#60a5fa'], ['HIATUS', 'Hiatus', '#facc15']].map(([v, label, dot]) => ({ label, dot, active: s.browseStatus === v, pick: () => this.setBrowse({ browseStatus: v }) })).map(o => ({ ...o, chipBg: o.active ? '#d8a94e' : '#17171d', chipBorder: o.active ? 'transparent' : 'rgba(255,255,255,.07)', chipColor: o.active ? '#171006' : '#9b9ba9' })),
+      sortOptions: [['POPULARITY_DESC', 'Popular'], ['TRENDING_DESC', 'Trending'], ['SCORE_DESC', 'Top rated'], ['START_DATE_DESC', 'Newest']].map(([v, label]) => ({ label, active: s.browseSort === v, pick: () => this.setBrowse({ browseSort: v }) })).map(o => ({ ...o, chipBg: o.active ? '#d8a94e' : '#17171d', chipBorder: o.active ? 'transparent' : 'rgba(255,255,255,.07)', chipColor: o.active ? '#171006' : '#9b9ba9' })),
 
       // chapters
       chaptersTotal: s.chapters.length,
@@ -2517,9 +3163,20 @@ class Component extends DCLogic {
       comments,
       noComments: s.comments.length === 0,
       commentText: s.commentText,
-      onCommentText: (e) => this.setState({ commentText: e.target.value }),
-      postOpacity: s.commentText.trim() ? '1' : '.45',
+      onCommentText: (e) => this.setState({ commentText: e.target.value.slice(0, 2000) }),
+      postOpacity: (s.commentText.trim() || s.commentImgs.length) ? '1' : '.45',
       addComment: () => this.addComment(),
+      cmBoxRef: (el) => { this._cmBox = el; },
+      cmBold: () => this.wrapSel('series', '**', '**'),
+      cmItalic: () => this.wrapSel('series', '*', '*'),
+      cmStrike: () => this.wrapSel('series', '~~', '~~'),
+      cmSpoiler: () => this.wrapSel('series', '||', '||'),
+      cmImgFile: (e) => this.onImgFile('series', e),
+      cmGif: () => this.openGiphy('series'),
+      commentImgRow: this.imgRow('series'),
+      giphyPanelSeries: this.giphyPanel('series'),
+      commentCharCount: (s.commentText || '').length + ' / 2000',
+      toast: s.toast,
       cReplyText: s.cReplyText,
       onCReplyText: (e) => this.setState({ cReplyText: e.target.value }),
       sortBest: () => this.setState({ commentSort: 'best' }),
@@ -2570,12 +3227,23 @@ class Component extends DCLogic {
       readerCommentCount: (s.chapterComments || []).length,
       noReaderComments: (s.chapterComments || []).length === 0,
       readerCommentText: s.readerCommentText,
-      onReaderCommentText: (e) => this.setState({ readerCommentText: e.target.value }),
-      readerPostOpacity: (s.readerCommentText || '').trim() ? '1' : '.45',
+      onReaderCommentText: (e) => this.setState({ readerCommentText: e.target.value.slice(0, 2000) }),
+      readerPostOpacity: ((s.readerCommentText || '').trim() || s.readerCommentImgs.length) ? '1' : '.45',
       addReaderComment: () => this.addReaderComment(),
+      rdBoxRef: (el) => { this._rdBox = el; },
+      rdBold: () => this.wrapSel('reader', '**', '**'),
+      rdItalic: () => this.wrapSel('reader', '*', '*'),
+      rdStrike: () => this.wrapSel('reader', '~~', '~~'),
+      rdSpoiler: () => this.wrapSel('reader', '||', '||'),
+      rdImgFile: (e) => this.onImgFile('reader', e),
+      rdGif: () => this.openGiphy('reader'),
+      readerImgRow: this.imgRow('reader'),
+      giphyPanelReader: this.giphyPanel('reader'),
+      readerCharCount: (s.readerCommentText || '').length + ' / 2000',
+      reportChapter: (e) => { if (e) e.stopPropagation(); this.reportChapter(); },
       replyText: s.replyText,
       onReplyText: (e) => this.setState({ replyText: e.target.value }),
-      readerComments: (s.chapterComments || []).map((c, i) => {
+      readerComments: (s.chapterComments || []).filter(c => !(s.blocked || []).includes(c.name)).map((c, i) => {
         const pal = commentPalette[i % commentPalette.length];
         const meName = s.user ? s.user.name : '';
         const liked = (c.likedBy || []).includes(meName);
@@ -2595,9 +3263,15 @@ class Component extends DCLogic {
           replyOpen: s.replyingTo === c.id,
           submitReply: () => this.addReply(c.id),
           openProfile: () => this.openProfile(c.name),
+          rich: this.richText(c.text, c.imgs, 14.5),
+          menuOpen: s.cmMenuFor === c.id,
+          toggleMenu: () => this.setState(p => ({ cmMenuFor: p.cmMenuFor === c.id ? null : c.id })),
+          report: () => this.reportItem('comment', { name: c.name, text: (c.text || '').slice(0, 140), where: (s.series && s.series.title) || '' }),
+          block: () => this.blockUser(c.name),
+          canBlock: !!(s.user && s.user.name !== c.name),
           replies: (c.replies || []).map((r, j) => {
             const rp2 = commentPalette[(i + j + 1) % commentPalette.length];
-            return { ...r, avatar: r.avatar || this.avatarFor(r.name), avatarImg: this.avImg(r.avatar || this.avatarFor(r.name), 30), initialShown: r.avatar ? '' : (r.name || '?')[0].toUpperCase(), bg: rp2[0], fg: rp2[1], ago: this.ago(new Date(r.t).toISOString()), isAdmin: this.isAdminName(r.name) };
+            return { ...r, avatar: r.avatar || this.avatarFor(r.name), avatarImg: this.avImg(r.avatar || this.avatarFor(r.name), 30), rich: this.richText(r.text, r.imgs, 14), initialShown: r.avatar ? '' : (r.name || '?')[0].toUpperCase(), bg: rp2[0], fg: rp2[1], ago: this.ago(new Date(r.t).toISOString()), isAdmin: this.isAdminName(r.name) };
           }),
         };
       }),
@@ -2651,8 +3325,42 @@ class Component extends DCLogic {
       favourites: (profileData && profileData.isMe) ? s.bookmarks.map(m => ({ ...m })) : [],
       hasFavourites: !!(profileData && profileData.isMe && s.bookmarks.length),
       noFavourites: !!(profileData && profileData.isMe && s.bookmarks.length === 0),
-      activity: profileData ? profileData.activity : [],
-      noActivity: !!(profileData && profileData.activity.length === 0),
+      profileBannerEl: profileData ? this.bannerEl(profileData.banner) : null,
+      onBannerFile: (e) => this.onBannerFile(e),
+      profTabOverview: () => this.setState({ profileTab: 'overview' }),
+      profTabComments: () => this.setState({ profileTab: 'comments' }),
+      profTabOverviewActive: s.profileTab !== 'comments',
+      profTabCommentsActive: s.profileTab === 'comments',
+      pTabOvBg: s.profileTab !== 'comments' ? '#20202a' : 'transparent',
+      pTabOvColor: s.profileTab !== 'comments' ? '#fff' : '#8a8a98',
+      pTabCmBg: s.profileTab === 'comments' ? '#20202a' : 'transparent',
+      pTabCmColor: s.profileTab === 'comments' ? '#fff' : '#8a8a98',
+      profCommentCount: profileData ? profileData.activity.length : 0,
+      showCommentsTab: !!(profileData && (profileData.isMe || profileData.privComments)),
+      showFavsSection: !!(profileData && (profileData.isMe || profileData.privFavs)),
+      showHistorySection: !!(profileData && (profileData.isMe || profileData.privHistory)),
+      historyTitle: profileData && profileData.isMe ? 'READING HISTORY' : 'LAST READ',
+      canClearHistory: !!(profileData && profileData.isMe && profileData.hist.length),
+      clearHistory: () => this.clearHistory(),
+      profHistory: profileData ? profileData.hist.slice(0, profileData.isMe ? 20 : 6).map(h => ({ ...h, ago: this.ago(new Date(h.t).toISOString()), open: () => this.openActivity(h) })) : [],
+      noProfHistory: !!(profileData && profileData.hist.length === 0),
+      profFavs: profileData ? (profileData.favs || []).map(f => ({ ...f, open: () => this.openActivity({ sid: f.id }) })) : [],
+      hasProfFavs: !!(profileData && (profileData.favs || []).length),
+      noProfFavs: !!(profileData && !(profileData.favs || []).length),
+      favPicking: s.favPicking,
+      toggleFavPick: () => this.setState(p => ({ favPicking: !p.favPicking })),
+      favPickLabel: s.favPicking ? 'Done' : 'Edit',
+      favCount: (user && user.favs ? user.favs.length : 0),
+      favChoices: (profileData && profileData.isMe) ? s.bookmarks.map(m => { const sel = !!(user && (user.favs || []).some(f => String(f.id) === String(m.id))); return { title: m.title, cover: m.cover, border: sel ? '#d8a94e' : 'transparent', opacity: sel ? '1' : '.72', toggle: () => this.toggleFav(m) }; }) : [],
+      noFavChoices: !!(profileData && profileData.isMe && s.bookmarks.length === 0),
+      achievements: profileData ? profileData.ach.map(a => ({ e: a.e, n: a.n, d: a.d, opacity: a.ok ? '1' : '.38', border: a.ok ? 'rgba(216,169,78,.4)' : 'rgba(255,255,255,.055)' })) : [],
+      profComments: profileData ? profileData.activity.map(a => ({ ...a, series: a.series || '', cursor: a.sid ? 'pointer' : 'default', open: () => this.openActivity(a) })) : [],
+      noProfComments: !!(profileData && profileData.activity.length === 0),
+      privacyRows: (() => { const p = (user && user.privacy) || {}; const mk = (key, label, desc) => ({ key, label, desc, bg: p[key] !== false ? '#d8a94e' : '#2a2a35', knob: p[key] !== false ? '19.5px' : '2.5px', toggle: () => this.togglePriv(key) }); return [mk('history', 'Show reading history', 'Others can see what you last read'), mk('favs', 'Show favourites', 'Your favourite series are public'), mk('comments', 'Show comments tab', 'Others can browse your comments')]; })(),
+      blockedUsers: (s.blocked || []).map(n => ({ name: n, unblock: () => this.unblockUser(n) })),
+      hasBlocked: (s.blocked || []).length > 0,
+      noBlocked: (s.blocked || []).length === 0,
+      onSetName: (e) => this.setState({ setName: e.target.value }),
       avatarPicking: s.avatarPicking,
       toggleAvatarPick: () => this.setState(p => ({ avatarPicking: !p.avatarPicking })),
       avatarChoices: (profileData && profileData.isMe)
@@ -2667,6 +3375,34 @@ class Component extends DCLogic {
       saveCrop: () => this.saveCroppedAvatar(),
       cancelCrop: () => this.setState({ cropOpen: false }),
 
+      // forums
+      forumCats: ['All', 'General', 'Series Talk', 'Suggestions', 'Off-topic'].map(c => ({
+        name: c, pick: () => this.setState({ forumCat: c }),
+        bg: s.forumCat === c ? '#d8a94e' : '#17171d',
+        color: s.forumCat === c ? '#171006' : '#9b9ba9',
+        border: s.forumCat === c ? 'transparent' : 'rgba(255,255,255,.07)',
+      })),
+      forumComposerOpen: s.forumComposerOpen,
+      toggleForumComposer: () => { if (!user) return this.setState({ view: 'login' }); this.setState(p => ({ forumComposerOpen: !p.forumComposerOpen })); },
+      ftTitle: s.ftTitle, ftBody: s.ftBody,
+      onFtTitle: (e) => this.setState({ ftTitle: e.target.value.slice(0, 120) }),
+      onFtBody: (e) => this.setState({ ftBody: e.target.value.slice(0, 4000) }),
+      ftCats: ['General', 'Series Talk', 'Suggestions', 'Off-topic'].map(c => ({
+        name: c, pick: () => this.setState({ ftCat: c }),
+        bg: s.ftCat === c ? 'rgba(216,169,78,.18)' : '#17171d',
+        color: s.ftCat === c ? '#eecf8f' : '#8a8a98',
+        border: s.ftCat === c ? 'rgba(216,169,78,.45)' : 'rgba(255,255,255,.07)',
+      })),
+      postThread: () => this.postThread(),
+      postThreadOpacity: (s.ftTitle.trim() && s.ftBody.trim()) ? '1' : '.45',
+      forumThreads: (s.forum || []).filter(t => s.forumCat === 'All' || t.cat === s.forumCat).map(t => this.mapThread(t)),
+      noThreads: (s.forum || []).filter(t => s.forumCat === 'All' || t.cat === s.forumCat).length === 0,
+      thread: (() => { const t = (s.forum || []).find(x => x.id === s.threadOpen); return t ? this.mapThread(t, true) : { title: '', replies: [], noReplies: true }; })(),
+      goForumsCrumb: () => this.goForums(),
+      frText: s.frText,
+      onFrText: (e) => this.setState({ frText: e.target.value.slice(0, 2000) }),
+      postForumReply: () => this.postForumReply(),
+      frOpacity: (s.frText || '').trim() ? '1' : '.45',
       // announcements
       hasHomeAnns: s.announcements.length > 0,
       homeAnnCards: s.announcements.slice(0, 6).map(a => this.mapAnn(a)),
@@ -2686,6 +3422,21 @@ class Component extends DCLogic {
       adminTab: s.adminTab,
       adminTabAnn: () => this.setState({ adminTab: 'announcements' }),
       adminTabMembers: () => this.setState({ adminTab: 'members' }),
+      adminTabReports: () => this.setState({ adminTab: 'reports' }),
+      reportsTabActive: s.adminTab === 'reports',
+      reportsTabBg: s.adminTab === 'reports' ? '#20202a' : 'transparent',
+      reportsTabColor: s.adminTab === 'reports' ? '#fff' : '#8a8a98',
+      reportCount: this.getReports().length,
+      noReports: this.getReports().length === 0,
+      adminReports: this.getReports().map(r => ({
+        typeLabel: (r.type || 'report').toUpperCase(),
+        typeColor: r.type === 'chapter' ? '#93c5fd' : '#f0a08c',
+        typeBg: r.type === 'chapter' ? 'rgba(96,165,250,.13)' : 'rgba(224,86,60,.13)',
+        summary: this.reportSummary(r),
+        by: r.by || '?',
+        ago: this.ago(new Date(r.t).toISOString()),
+        resolve: () => this.resolveReport(r.t),
+      })),
       annTabActive: s.adminTab === 'announcements',
       membersTabActive: s.adminTab === 'members',
       annTabBg: s.adminTab === 'announcements' ? '#20202a' : 'transparent',
@@ -2719,6 +3470,12 @@ class Component extends DCLogic {
         toggleAdmin: () => this.adminToggleAdmin(u.name),
         remove: () => this.adminRemoveUser(u.name),
         adminBtnLabel: u.isAdmin ? 'Revoke admin' : 'Make admin',
+        isBanned: !!u.banned,
+        banBtnLabel: u.banned ? 'Unban' : 'Ban',
+        banColor: u.banned ? '#4ade80' : '#f87171',
+        banBg: u.banned ? 'rgba(74,222,128,.1)' : 'rgba(248,113,113,.1)',
+        banBorder: u.banned ? 'rgba(74,222,128,.3)' : 'rgba(248,113,113,.3)',
+        toggleBan: () => this.adminToggleBan(u.name),
       })),
       adminStats: [
         { value: String(adminList.length), label: 'Total members' },
@@ -2783,7 +3540,7 @@ class Component extends DCLogic {
     }
     try { me = localStorage.getItem('vpx-sreactme-' + id) || null; } catch (e) {}
     try { comments = JSON.parse(localStorage.getItem('vpx-comments-' + id) || '[]'); } catch (e) { comments = []; }
-    this.setState({ srReact: react, srReactMe: me, srReactAnim: null, comments, commentText: '', cReplyTo: null, cReplyText: '', commentSort: 'best' });
+    this.setState({ srReact: react, srReactMe: me, srReactAnim: null, comments, commentText: '', cReplyTo: null, cReplyText: '', commentSort: 'best', commentImgs: [], giphyFor: null, cmMenuFor: null });
   }
 
   reactSeries(key) {
@@ -2804,10 +3561,11 @@ class Component extends DCLogic {
 
   addComment() {
     const text = (this.state.commentText || '').trim();
+    const imgs = this.state.commentImgs || [];
     const { user, series } = this.state;
-    if (!text || !user || !series) return;
-    const c = { id: 'c' + Date.now(), name: user.name, avatar: this.userAvatarUrl(), text, t: Date.now(), up: 0, down: 0, upBy: [], downBy: [], replies: [] };
-    this.setState(s => { const comments = [c, ...s.comments]; this.saveComments(series.id, comments); return { comments, commentText: '' }; });
+    if ((!text && !imgs.length) || !user || !series) return;
+    const c = { id: 'c' + Date.now(), name: user.name, avatar: this.userAvatarUrl(), text, imgs, t: Date.now(), up: 0, down: 0, upBy: [], downBy: [], replies: [], sid: series.id, series: series.title };
+    this.setState(s => { const comments = [c, ...s.comments]; this.saveComments(series.id, comments); return { comments, commentText: '', commentImgs: [], giphyFor: null }; });
   }
 
   voteComment(cid, rid, dir) {
@@ -2911,6 +3669,7 @@ class Component extends DCLogic {
     if (!s.loginPass) return err('Enter your password.');
     const user = s.users.find(u => (u.email || '').toLowerCase() === id || u.name.toLowerCase() === id);
     if (!user) return err('No account found. Check your details or create an account.');
+    if (user.banned) return err('This account has been banned. Contact a moderator if you think this is a mistake.');
     if (user.pass !== this.pwHash(s.loginPass)) return err('Incorrect password. Try again.');
     this.setState({ loggingIn: true, loginError: '' });
     setTimeout(() => this.finishLogin(user), 450);
@@ -2926,7 +3685,7 @@ class Component extends DCLogic {
     const target = this.state.users.find(u => u.name.toLowerCase() === (name || '').toLowerCase());
     if (!target) return;
     window.scrollTo(0, 0);
-    this.setState({ view: 'profile', profileUser: target.name, profileTab: 'overview', avatarPicking: false, notifOpen: false, userMenuOpen: false });
+    this.setState({ view: 'profile', profileUser: target.name, profileTab: 'overview', avatarPicking: false, favPicking: false, notifOpen: false, userMenuOpen: false });
     this.saveRoute({ view: 'home' });
     // populate favourites for own profile
     const isMe = this.state.user && this.state.user.name.toLowerCase() === target.name.toLowerCase();
@@ -3068,7 +3827,7 @@ class Component extends DCLogic {
     const author = a.author || 'Shoeez';
     const u = (this.state.users || []).find(x => x.name.toLowerCase() === author.toLowerCase());
     const av = (u && u.avatar) || this.avatarFor(author);
-    return { ...a, author, avatar: av, avatarImg: this.avImg(av, 42), avatarImgLg: this.avImg(av, 46), dateLabel: this.annDate(a.t), dateFull: this.annDateFull(a.t), open: () => this.openAnnouncement(a.id) };
+    return { ...a, author, avatar: av, avatarImg: this.avImg(av, 42), avatarImgLg: this.avImg(av, 46), dateLabel: this.annDate(a.t), dateFull: this.annDateFull(a.t), open: () => this.openAnnouncement(a.id), openAuthor: () => this.openProfile(author) };
   }
   likeFiltered() { const s = this.state; let list = s.notifs || []; if (!s.showLikeNotifs) list = list.filter(n => n.type !== 'like'); return list; }
   filteredNotifs() { const s = this.state; let list = this.likeFiltered(); if (s.notifTab === 'chapters') list = list.filter(n => n.type === 'chapter'); if (s.notifTab === 'comments') list = list.filter(n => n.type === 'reply' || n.type === 'like'); return list; }
@@ -3295,13 +4054,29 @@ class Component extends DCLogic {
     const u = this.state.user; if (!u) return;
     const bio = this.state.setBio.trim();
     const email = this.state.setEmail.trim();
+    const newName = (this.state.setName || '').trim();
+    const renaming = newName && newName.toLowerCase() !== u.name.toLowerCase();
     if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return this.setState({ setErr: 'Enter a valid email address.', setMsg: '' });
     if (email.toLowerCase() !== (u.email || '').toLowerCase() && this.state.users.find(x => (x.email || '').toLowerCase() === email.toLowerCase())) return this.setState({ setErr: 'That email is already in use.', setMsg: '' });
-    const users = this.state.users.map(x => x.name === u.name ? { ...x, bio, email } : x);
-    const nu = { ...u, bio, email };
+    if (renaming) {
+      if (newName.length < 3) return this.setState({ setErr: 'Username must be at least 3 characters.', setMsg: '' });
+      if (!/^[a-z0-9_]+$/i.test(newName)) return this.setState({ setErr: 'Username can only use letters, numbers and underscores.', setMsg: '' });
+      if (this.state.users.find(x => x.name.toLowerCase() === newName.toLowerCase())) return this.setState({ setErr: 'That username is already taken.', setMsg: '' });
+    }
+    const finalName = renaming ? newName : u.name;
+    const users = this.state.users.map(x => x.name === u.name ? { ...x, name: finalName, bio, email } : x);
+    if (renaming) {
+      try {
+        const h = localStorage.getItem('vpx-history-' + u.name);
+        if (h) { localStorage.setItem('vpx-history-' + finalName, h); localStorage.removeItem('vpx-history-' + u.name); }
+        const nn = localStorage.getItem('vpx-notifs-' + u.name);
+        if (nn) { localStorage.setItem('vpx-notifs-' + finalName, nn); localStorage.removeItem('vpx-notifs-' + u.name); }
+      } catch (e) {}
+    }
+    const nu = { ...u, name: finalName, bio, email };
     try { localStorage.setItem('vpx-user', JSON.stringify(nu)); } catch (e) {}
     this.persistUsers(users);
-    this.setState({ user: nu, setErr: '', setMsg: 'Profile saved.' });
+    this.setState({ user: nu, setName: finalName, profileUser: this.state.profileUser === u.name ? finalName : this.state.profileUser, setErr: '', setMsg: renaming ? 'Profile saved \u2014 you are now ' + finalName + '.' : 'Profile saved.' });
   }
 
   changePassword() {
@@ -3351,8 +4126,9 @@ class Component extends DCLogic {
 
   setBrowse(patch) { this.setState(patch, () => this.loadBrowse()); }
 
-  async loadBrowse() {
-    this.setState({ browseLoading: true });
+  async loadBrowse(page) {
+    page = page || 1;
+    this.setState(page === 1 ? { browseLoading: true, browsePage: 1 } : { browseLoadingMore: true });
     const s = this.state;
     const adult = this.props.contentFilter === 'erotica' ? null : false;
     const country = s.browseType || 'KR';
@@ -3363,21 +4139,23 @@ class Component extends DCLogic {
     if ((s.browseGenres || []).length) { vars.genres = s.browseGenres; decl.push('$genres: [String]'); extra += ', genre_in: $genres'; }
     if (s.browseTag) { vars.tags = [s.browseTag]; decl.push('$tags: [String]'); extra += ', tag_in: $tags'; }
     if (s.browseSearch) { vars.q = s.browseSearch; decl.push('$q: String'); extra += ', search: $q'; }
+    vars.page = page; decl.push('$page: Int');
     const query = `query (${decl.join(', ')}) {
-      Page(perPage: 30) { media(type: MANGA, countryOfOrigin: $country, isAdult: $adult, sort: $sort${extra}) { ${this.MEDIA_FRAG} } }
+      Page(page: $page, perPage: 30) { pageInfo { hasNextPage } media(type: MANGA, countryOfOrigin: $country, isAdult: $adult, sort: $sort${extra}) { ${this.MEDIA_FRAG} } }
     }`;
     try {
       const d = await this.gql(query, vars, 5 * 60e3);
-      this.setState({ browseResults: (d.Page.media || []).map(m => ({ ...this.mapCard(m), score: this.alScore(m), scoreNum: m.averageScore ? (m.averageScore / 10).toFixed(1) : '—', status: this.alStatusLabel(m.status), statusDot: m.status === 'RELEASING' ? '#4ade80' : (m.status === 'FINISHED' ? '#60a5fa' : '#9b9ba9') })), browseLoading: false });
+      const mapped = (d.Page.media || []).map(m => ({ ...this.mapCard(m), score: this.alScore(m), scoreNum: m.averageScore ? (m.averageScore / 10).toFixed(1) : '—', status: this.alStatusLabel(m.status), statusDot: m.status === 'RELEASING' ? '#4ade80' : (m.status === 'FINISHED' ? '#60a5fa' : '#9b9ba9') }));
+      this.setState(p => ({ browseResults: page === 1 ? mapped : [...p.browseResults, ...mapped], browseLoading: false, browseLoadingMore: false, browsePage: page, browseHasMore: !!(d.Page.pageInfo && d.Page.pageInfo.hasNextPage) }));
     } catch (e) {
-      this.setState({ browseResults: [], browseLoading: false });
+      this.setState(p => ({ browseResults: page === 1 ? [] : p.browseResults, browseLoading: false, browseLoadingMore: false }));
     }
   }
 
   // ---------- ratings ----------
   loadMyRating(id) {
     let r = 0;
-    try { r = parseInt(localStorage.getItem('vpx-rating-' + id) || '0', 10) || 0; } catch (e) {}
+    try { r = parseFloat(localStorage.getItem('vpx-rating-' + id) || '0') || 0; } catch (e) {}
     this.setState({ myRating: r, ratingOpen: false, ratingHover: 0 });
   }
 
@@ -3427,16 +4205,20 @@ class Component extends DCLogic {
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (!k || k.indexOf('vpx-comments-') !== 0) continue;
+        if (!k) continue;
+        const isSeries = k.indexOf('vpx-comments-') === 0, isCh = k.indexOf('vpx-cc-') === 0;
+        if (!isSeries && !isCh) continue;
+        const keySid = isSeries ? k.slice(13) : null;
         const arr = JSON.parse(localStorage.getItem(k) || '[]');
         for (const c of arr) {
-          if ((c.name || '').toLowerCase() === lname) acts.push({ text: c.text, t: c.t });
-          for (const r of (c.replies || [])) if ((r.name || '').toLowerCase() === lname) acts.push({ text: r.text, t: r.t });
+          const sid = c.sid || keySid;
+          if ((c.name || '').toLowerCase() === lname) acts.push({ text: c.text, t: c.t, sid, series: c.series || '' });
+          for (const r of (c.replies || [])) if ((r.name || '').toLowerCase() === lname) acts.push({ text: r.text, t: r.t, sid, series: c.series || '' });
         }
       }
     } catch (e) {}
     acts.sort((a, b) => b.t - a.t);
-    return acts.slice(0, 8).map(a => ({ text: a.text, ago: this.ago(new Date(a.t).toISOString()) }));
+    return acts.slice(0, 20).map(a => ({ ...a, ago: this.ago(new Date(a.t).toISOString()) }));
   }
 }
 
