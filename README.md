@@ -40,3 +40,4 @@
 ```
 
 `chapters` can also be an explicit list: `[{ "num": 0, "file": "Chapter_0.pdf", "title": "Prologue" }, ...]`
+ 
